@@ -170,42 +170,35 @@ body {
 img {
   height: 200px;
 }
-.role-dropdown {
-  margin: 15px 0;
-  display: flex;
-  flex-direction: column;
-  font-family: sans-serif;
-  font-size: 14px;
-}
-
-.role-dropdown label {
-  margin-bottom: 5px;
-  font-weight: 600;
-}
-
-.role-dropdown select {
-  padding: 10px;
-  border-radius: 8px;
+/* Make inputs and select look the same */
+.auth-box input,
+.auth-box select {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
   border: 1px solid #ccc;
-  background-color: #f9f9f9;
+  border-radius: 8px;
   font-size: 14px;
-  cursor: pointer;
+  background: #fff;
+  appearance: none; /* makes select clean */
   transition: all 0.2s ease;
 }
 
-.role-dropdown select:hover {
-  border-color: #888;
-}
-
-.role-dropdown select:focus {
+.auth-box input:focus,
+.auth-box select:focus {
   outline: none;
   border-color: #4caf50;
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
+/* Extra spacing below password input */
+.auth-box input[type="password"] {
+  margin-bottom: 1rem; /* bigger space */
+}
 
-/* Login/Register link */
-.link-text {
-  color: #007bff;
-  cursor: pointer;
-  text-decoration: underline;
+/* Keep select margin normal */
+.auth-box select {
+  margin-bottom: 1rem; /* regular spacing */
+}
+.auth-box .primary-btn {
+  margin-bottom: 1rem; /* adds space below the button */
 }
