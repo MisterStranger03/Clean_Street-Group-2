@@ -202,3 +202,26 @@ img {
 .auth-box .primary-btn {
   margin-bottom: 1rem; /* adds space below the button */
 }
+/* Make clickable links in forms blue */
+.link-text {
+  color: #007bff;        /* blue color */
+  cursor: pointer;       /* cursor changes to pointer on hover */
+  text-decoration: underline; /* optional, underline for link look */
+  transition: color 0.2s ease;
+}
+
+.link-text:hover {
+  color: #0056b3; /* darker blue on hover */
+}
+
+/* Make clickable links in forms blue */
+.link-text {
+  color: #007bff;              /* blue color */
+  cursor: pointer;             /* pointer cursor on hover */
+  text-decoration: underline;  /* optional underline */
+  transition: color 0.2s ease;
+}
+
+.link-text:hover {
+  color: #0056b3;             /* darker blue on hover */
+}

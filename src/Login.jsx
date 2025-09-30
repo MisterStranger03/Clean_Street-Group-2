@@ -44,11 +44,13 @@ function Login() {
           <button type="submit" className="primary-btn">Login</button>
         </form>
         <p>
-          Do not have an account? 
+          Do not have an account?{" "}
           <span 
             onClick={() => navigate('/register')} 
-            style={{color: 'blue', cursor: 'pointer'}}
-          > Register</span>
+            className="link-text"
+          >
+            Register
+          </span>
         </p>
       </div>
     </div>
