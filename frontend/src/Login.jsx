@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
+import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Fetch registered user from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData'));
+    try {
+      const response = await axios.post('http://localhost:5001/api/users/login', {
+        email,
+        password,
+      }, { withCredentials: true });
 
-    if (userData && userData.email === email && userData.password === password) {
-      alert(`Logged in as ${userData.role}`);
-      navigate('/dashboard', { state: { role: userData.role } }); // redirect
-    } else {
-      alert('Invalid credentials!');
+      if (response.data && response.data.user) {
+        // Store JWT token in localStorage
+        localStorage.setItem('token', response.data.user.token);
+
+        alert(`Logged in as ${response.data.user.role}`);
+        navigate('/dashboard', { state: { role: response.data.user.role } }); // redirect
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Login failed!');
     }
   }
 
