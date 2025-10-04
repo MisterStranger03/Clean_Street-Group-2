@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
-import axios from 'axios';
 
 function Register() {
   const navigate = useNavigate();
@@ -11,21 +10,14 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
 
-    const userData = { email, password, role };
+    const userData = { fullName, username, email, password, role };
+    localStorage.setItem('userData', JSON.stringify(userData));
 
-    try {
-      const response = await axios.post('http://localhost:5001/api/users/register', userData);
-      console.log('Response:', response.data);
-
-      alert(`Registered as ${role}!`);
-      navigate('/login');
-    } catch (error) {
-      console.error('Error:', error.response?.data || error.message);
-      alert('Registration failed!');
-    }
+    alert(`Registered as ${role}!`);
+    navigate('/login');
   }
 
   return (
