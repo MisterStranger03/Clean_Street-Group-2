@@ -1,5 +1,5 @@
 const express = require('express');
-const User = require('../models/user');
+const User = require('../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -16,16 +16,15 @@ router.post('/register', async (req, res) => {
     if (userExists)
       return res.status(400).json({ message: 'User already exists' });
 
-    // DON'T hash password manually here! pre('save') hook will do it
     const user = new User({
       email,
-      password,
+      password, // pre-save hook hashes it
       role,
       name,
       username,
       location,
       citizenId,
-      avatar: avatar || "", // store Base64 string
+      avatar: avatar || "", // Cloudinary URL
     });
 
     await user.save();
@@ -54,7 +53,9 @@ router.post('/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ message: 'Invalid email or password' });
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '30d',
+    });
 
     res.json({
       message: 'Login successful',
@@ -63,7 +64,7 @@ router.post('/login', async (req, res) => {
         email: user.email,
         role: user.role,
         token,
-        avatar: user.avatar || null, // Base64 string
+        avatar: user.avatar || null, // Cloudinary URL
       },
     });
   } catch (err) {
@@ -79,7 +80,7 @@ router.get('/profile', verifyJWT, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    res.json(user);
+    res.json(user); // avatar is Cloudinary URL
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -101,11 +102,13 @@ router.put('/profile', verifyJWT, async (req, res) => {
     user.email = email || user.email;
     user.location = location || user.location;
 
-    // Update avatar (Base64)
-    if (avatar) user.avatar = avatar;
+    if (avatar) {
+      user.avatar = avatar; // Cloudinary URL
+    }
 
-    // Update password (will be hashed automatically)
-    if (password) user.password = password;
+    if (password) {
+      user.password = password; // pre-save hook hashes it
+    }
 
     const updatedUser = await user.save();
     res.json(updatedUser);

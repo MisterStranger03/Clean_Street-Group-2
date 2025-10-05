@@ -14,6 +14,7 @@ function Profile() {
     avatar: "",
   });
   const [formData, setFormData] = useState({ ...user });
+  const [uploading, setUploading] = useState(false);
   const token = localStorage.getItem("token");
   const fileInputRef = useRef();
 
@@ -45,20 +46,36 @@ function Profile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Convert selected image to Base64
-  const handleAvatarChange = (e) => {
+  // Upload avatar to Cloudinary
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({ ...prev, avatar: reader.result }));
-      setUser((prev) => ({ ...prev, avatar: reader.result })); // preview
-    };
-    reader.readAsDataURL(file); // result will be Base64 string
+    setUploading(true);
+    const formDataCloud = new FormData();
+    formDataCloud.append("file", file);
+    formDataCloud.append("upload_preset", "unsigned_avatar"); // replace with your preset
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload", // replace with your cloud name
+        {
+          method: "POST",
+          body: formDataCloud,
+        }
+      );
+      const data = await res.json();
+      setFormData((prev) => ({ ...prev, avatar: data.secure_url }));
+      setUser((prev) => ({ ...prev, avatar: data.secure_url })); // preview
+    } catch (err) {
+      console.error("Cloudinary upload error:", err);
+      alert("Image upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
-  // Save profile (including Base64 avatar)
+  // Save profile
   const handleSave = async () => {
     try {
       const res = await fetch("http://localhost:5001/api/users/profile", {
@@ -77,6 +94,7 @@ function Profile() {
       setEditMode(false);
     } catch (err) {
       console.error("Error updating profile:", err);
+      alert("Profile update failed");
     }
   };
 
@@ -105,6 +123,7 @@ function Profile() {
                 style={{ display: "none" }}
                 ref={fileInputRef}
                 onChange={handleAvatarChange}
+                disabled={uploading}
               />
             </div>
             <div className="profile-info">
@@ -135,35 +154,6 @@ function Profile() {
               <span>•••••••</span>
             </div>
           </div>
-
-          <div className="reports-card">
-            <div className="circle-chart">
-              <svg viewBox="0 0 36 36">
-                <path
-                  className="circle-bg"
-                  d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  className="circle"
-                  strokeDasharray={`${user.resolved}, 100`}
-                  d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              </svg>
-              <div className="circle-text">{user.resolved}%</div>
-            </div>
-            <div className="report-info">
-              <h4>Total issues: {user.totalIssues}</h4>
-              <p>Recent Activity:</p>
-              <ul>
-                <li>Raised issue on street light fault near main road</li>
-                <li>Raised issue on water quality due to impurities</li>
-              </ul>
-            </div>
-          </div>
         </>
       ) : (
         <>
@@ -189,8 +179,9 @@ function Profile() {
                 <button
                   className="camera-btn"
                   onClick={() => fileInputRef.current.click()}
+                  disabled={uploading}
                 >
-                  📷
+                  {uploading ? "Uploading..." : "📷"}
                 </button>
                 <input
                   type="file"

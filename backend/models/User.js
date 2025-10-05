@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema(
     citizenId: { type: String, default: "" },
     resolved: { type: Number, default: 0 },
     totalIssues: { type: Number, default: 0 },
-    avatar: { type: String, default: "" }, // Base64 string
+    avatar: { type: String, default: "" }, // Cloudinary URL
   },
   { timestamps: true }
 );

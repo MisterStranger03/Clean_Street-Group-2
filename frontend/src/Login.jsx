@@ -24,10 +24,9 @@ function Login() {
         return;
       }
 
-      // Save JWT token, role and avatar from backend
       localStorage.setItem('token', data.user.token);
       localStorage.setItem('role', data.user.role);
-      localStorage.setItem('avatar', data.user.avatar || ''); // Base64 avatar
+      localStorage.setItem('avatar', data.user.avatar || '');
 
       alert(`Logged in as ${data.user.role}`);
       navigate('/dashboard');
@@ -60,13 +59,7 @@ function Login() {
           <button type="submit" className="primary-btn">Login</button>
         </form>
         <p>
-          Do not have an account?{" "}
-          <span 
-            onClick={() => navigate('/register')} 
-            className="link-text"
-          >
-            Register
-          </span>
+          Do not have an account? <span onClick={() => navigate('/register')} className="link-text">Register</span>
         </p>
       </div>
     </div>
