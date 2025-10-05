@@ -1,24 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
 function Register() {
   const navigate = useNavigate();
-  const [role, setRole] = useState(''); // empty by default
+  const [role, setRole] = useState('');
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [avatar, setAvatar] = useState(''); // Base64 string
+  const fileInputRef = useRef();
 
-  const handleRegister = (e) => {
+  // Convert selected file to Base64
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => setAvatar(reader.result);
+    reader.readAsDataURL(file); // Base64 string
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    const userData = { fullName, username, email, password, role };
-    localStorage.setItem('userData', JSON.stringify(userData));
+    const userData = { 
+      name: fullName, 
+      username,
+      email,
+      password,
+      role,
+      avatar, // send Base64 string to backend
+    };
 
-    alert(`Registered as ${role}!`);
-    navigate('/login');
-  }
+    try {
+      const res = await fetch("http://localhost:5001/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Registration failed");
+        return;
+      }
+
+      alert(`Registered successfully as ${role}!`);
+      navigate('/login');
+    } catch (err) {
+      console.error("Registration error:", err);
+      alert("Registration failed. Check console for details.");
+    }
+  };
 
   return (
     <div className="auth-container">
@@ -55,7 +91,21 @@ function Register() {
             required 
           />
 
-          {/* Styled select that looks like an input */}
+          {/* Avatar Upload */}
+          <div className="avatar-upload">
+            <button type="button" onClick={() => fileInputRef.current.click()}>
+              Upload Avatar
+            </button>
+            <input 
+              type="file" 
+              accept="image/*" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handleAvatarChange} 
+            />
+            {avatar && <img src={avatar} alt="Avatar Preview" className="avatar-preview" />}
+          </div>
+
           <select 
             value={role} 
             onChange={e => setRole(e.target.value)} 

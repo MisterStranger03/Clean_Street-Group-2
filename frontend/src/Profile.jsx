@@ -1,42 +1,111 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./profile.css";
 
 function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [user, setUser] = useState({
-    name: "Ameerunnisa Khan",
-    username: "Ameerunnisa",
-    email: "Ameerunnisa@gmail.com",
-    location: "Kakinada",
-    citizenId: "2",
-    resolved: 85,
-    totalIssues: 24,
+    name: "",
+    username: "",
+    email: "",
+    location: "",
+    citizenId: "",
+    resolved: 0,
+    totalIssues: 0,
+    avatar: "",
   });
-
   const [formData, setFormData] = useState({ ...user });
+  const token = localStorage.getItem("token");
+  const fileInputRef = useRef();
 
+  // Fetch profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!token) return;
+      try {
+        const res = await fetch("http://localhost:5001/api/users/profile", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        const data = await res.json();
+        setUser(data);
+        setFormData(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchProfile();
+  }, [token]);
+
+  // Input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setUser(formData);
-    setEditMode(false);
+  // Convert selected image to Base64
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({ ...prev, avatar: reader.result }));
+      setUser((prev) => ({ ...prev, avatar: reader.result })); // preview
+    };
+    reader.readAsDataURL(file); // result will be Base64 string
+  };
+
+  // Save profile (including Base64 avatar)
+  const handleSave = async () => {
+    try {
+      const res = await fetch("http://localhost:5001/api/users/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error("Failed to update profile");
+      const updated = await res.json();
+      setUser(updated);
+      setFormData(updated);
+      setEditMode(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
   };
 
   return (
     <div className="profile-container">
       {!editMode ? (
         <>
-          {/* Back Button */}
           <div className="back-btn">← BACK</div>
 
-          {/* Profile Header */}
           <div className="profile-header">
             <div className="avatar-box">
-              <img src="/user.png" alt="User Avatar" className="avatar-large" />
-              <button className="camera-btn">📷</button>
+              <img
+                src={user.avatar || "/user.png"}
+                alt="User Avatar"
+                className="avatar-large"
+              />
+              <button
+                className="camera-btn"
+                onClick={() => fileInputRef.current.click()}
+              >
+                📷
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={handleAvatarChange}
+              />
             </div>
             <div className="profile-info">
               <h2>{user.name}</h2>
@@ -47,7 +116,6 @@ function Profile() {
             </button>
           </div>
 
-          {/* Account Info */}
           <div className="account-info">
             <h3>Account Information</h3>
             <p className="info-sub">
@@ -68,7 +136,6 @@ function Profile() {
             </div>
           </div>
 
-          {/* Reports Status */}
           <div className="reports-card">
             <div className="circle-chart">
               <svg viewBox="0 0 36 36">
@@ -100,7 +167,6 @@ function Profile() {
         </>
       ) : (
         <>
-          {/* Navigation bar (Edit Mode) */}
           <div className="topbar">
             <div className="logo">CLEAN STREET</div>
             <nav>
@@ -111,14 +177,30 @@ function Profile() {
             </nav>
           </div>
 
-          {/* Edit Profile Form */}
           <div className="edit-profile">
             <h2>Profile Information</h2>
             <div className="edit-form">
               <div className="avatar-box">
-                <img src="/user.png" alt="User Avatar" className="avatar-large" />
-                <button className="camera-btn">📷</button>
+                <img
+                  src={user.avatar || "/user.png"}
+                  alt="User Avatar"
+                  className="avatar-large"
+                />
+                <button
+                  className="camera-btn"
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  📷
+                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleAvatarChange}
+                />
               </div>
+
               <div className="form-fields">
                 <label>
                   Full Name:
@@ -162,6 +244,7 @@ function Profile() {
                     type="password"
                     name="password"
                     placeholder="Change Password"
+                    onChange={handleChange}
                   />
                 </label>
                 <label>
@@ -170,6 +253,7 @@ function Profile() {
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm Password"
+                    onChange={handleChange}
                   />
                 </label>
               </div>

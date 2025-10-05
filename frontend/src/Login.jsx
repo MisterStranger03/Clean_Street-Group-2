@@ -7,19 +7,35 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Fetch registered user from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData'));
+    try {
+      const res = await fetch('http://localhost:5001/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (userData && userData.email === email && userData.password === password) {
-      alert(`Logged in as ${userData.role}`);
-      navigate('/dashboard', { state: { role: userData.role } }); // redirect
-    } else {
-      alert('Invalid credentials!');
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || 'Login failed');
+        return;
+      }
+
+      // Save JWT token, role and avatar from backend
+      localStorage.setItem('token', data.user.token);
+      localStorage.setItem('role', data.user.role);
+      localStorage.setItem('avatar', data.user.avatar || ''); // Base64 avatar
+
+      alert(`Logged in as ${data.user.role}`);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Login failed. Check console.');
     }
-  }
+  };
 
   return (
     <div className="auth-container">

@@ -4,14 +4,30 @@ const connectDB = require('./config/db');
 const session = require('express-session');
 const cors = require('cors');
 const MongoStore = require('connect-mongo');
+const path = require('path');
+
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// Connect to database
+// ✅ Connect to MongoDB
 connectDB();
 
+// ==========================
 // Middleware
-app.use(express.json());
+// ==========================
+
+// Increase JSON payload limit to handle Base64 images
+app.use(express.json({ limit: '10mb' })); // Accept JSON up to 10MB
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// Enable CORS
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 
 // Session middleware
 app.use(
@@ -23,28 +39,26 @@ app.use(
       mongoUrl: process.env.MONGO_URI,
       collectionName: 'sessions',
     }),
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    },
   })
 );
 
-// Enable CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // Replace with frontend URL in production
-  credentials: true,
-}));
+// Serve static uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// Test route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-const userRoutes = require('./routes/userRoutes');
-
-// User routes
+// Mount user routes
 app.use('/api/users', userRoutes);
+
+// Start server
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
