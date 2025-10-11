@@ -61,8 +61,8 @@ const activities = [
 ];
 
 const quickActions = [
-  { label: "+ Report issues here", primary: true },
-  { label: "view all the components", primary: false },
+  { label: "+ Report issues here", primary: true, action: "/report" },
+  { label: "view all the components", primary: false, action: "/complaints" },
 ];
 
 const Dashboard = () => {
@@ -72,6 +72,10 @@ const Dashboard = () => {
     navigate("/profile"); // 3. Define the navigation function
   };
 
+  const handleQuickAction = (action) => {
+    navigate(action);
+  };
+
   return (
     <div className="dashboard">
       <header className="top-nav">
@@ -79,7 +83,7 @@ const Dashboard = () => {
           <img src={logo} alt="Clean Street Logo" className="brand-logo" />
         </div>
         <nav className="nav-links">
-          <a href="/" className="active">
+          <a href="/dashboard" className="active">
             Dashboard
           </a>
           <a href="/report">Report Issue</a>
@@ -135,11 +139,12 @@ const Dashboard = () => {
           <aside className="quick-actions">
             <h2>Quick Actions</h2>
             <div className="actions">
-              {quickActions.map(({ label, primary }) => (
+              {quickActions.map(({ label, primary, action }) => (
                 <button
                   key={label}
                   type="button"
                   className={primary ? "primary" : "secondary"}
+                  onClick={() => handleQuickAction(action)}
                 >
                   {label}
                 </button>
@@ -153,4 +158,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
