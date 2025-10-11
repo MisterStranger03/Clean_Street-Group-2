@@ -23,6 +23,18 @@
   margin-bottom: 2rem;
 }
 
+/* Edit Profile Header */
+.edit-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
 .avatar-box {
   position: relative;
 }
@@ -36,16 +48,27 @@
   position: absolute;
   bottom: 5px;
   right: 5px;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
   background: #6aa84f;
   border: none;
   color: white;
-  padding: 4px 6px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 100%;
 }
-.profile-info h2 {
-  margin: 0;
-  font-weight: 600;
+
+/* Adjusted camera button background size for uploading text */
+.camera-btn:disabled {
+  font-size: 0.8rem;
+  background: #6aa84f;
+  width: auto;
+  padding: 0.5rem 1rem;
 }
 
 /* Buttons */
@@ -132,7 +155,7 @@
   font-size: 1.2rem;
 }
 
-/* Top Bar (Edit Mode) */
+/* Edit Profile Mode */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -155,13 +178,24 @@
   text-decoration: underline;
 }
 
-/* Edit Profile Form */
 .edit-profile {
   background: #fff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
+
+.edit-profile-container {
+
+  background-color: #ffffff;
+  border-radius: 4%;
+}
+
+.edit-profile-container .camera-btn {
+  top: 15%;
+}
+
+
 .edit-form {
   display: flex;
   gap: 2rem;
@@ -183,4 +217,10 @@
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+}
+
+/* Added separate classes for Profile and Edit Profile pages */
+.edit-profile-container {
+  padding: 2rem;
+  font-family: "Poppins", sans-serif;
 }
