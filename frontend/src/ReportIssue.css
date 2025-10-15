@@ -200,6 +200,55 @@
   object-fit: cover;
 }
 
+/* Styles for image upload preview */
+.image-upload-preview {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.image-upload-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.image-upload-preview div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Styles for image upload input and button */
+.image-upload-input {
+  display: none;
+}
+
+.image-upload-btn {
+  background-color: #4a7c59;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.image-upload-btn:hover {
+  background-color: #2d5a3d;
+}
+
 /* Location Help Text */
 .location-help {
   color: #666;
@@ -489,7 +538,7 @@ h2 {
     text-align: center;
 }
 .image-upload-preview {
-    width: 170px;
+    width: 700px;
     height: 150px;
     background: #eee;
     display: flex;

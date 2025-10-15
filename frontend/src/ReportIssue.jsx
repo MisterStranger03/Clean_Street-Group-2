@@ -3,102 +3,304 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./ReportIssue.css";
 import { useNavigate } from "react-router-dom";
-import logo from './assets/logo.jpeg'; // Import logo image
+import logo from "./assets/logo.jpeg";
+
+const priorityOptions = ["Low", "Medium", "High"];
+const priorityLevelOptions = ["1", "2", "3"];
 
 export default function ReportIssue() {
   const [issueTitle, setIssueTitle] = useState("");
+  const [issuePriority, setIssuePriority] = useState("");
+  const [issuePriorityLevel, setIssuePriorityLevel] = useState("");
   const [issueDescription, setIssueDescription] = useState("");
+  const [nearbyLandmark, setNearbyLandmark] = useState("");
   const [address, setAddress] = useState("");
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
+  const [mapCenter, setMapCenter] = useState({ lat: 11.025, lng: 77.02 });
+  const [uploading, setUploading] = useState(false);
+
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  // ✅ Upload to Cloudinary
+  const uploadImagesToCloudinary = async () => {
+    const uploadedImageUrls = [];
+
+    for (const img of images) {
+      if (img instanceof File) {
+        const formData = new FormData();
+        formData.append("file", img);
+        formData.append("upload_preset", "unsigned_issues"); // your unsigned preset name
+
+        try {
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/dchdfdaqy/image/upload",
+            { method: "POST", body: formData }
+          );
+          const data = await res.json();
+
+          if (data.secure_url) {
+            uploadedImageUrls.push(data.secure_url);
+          } else {
+            console.error("Cloudinary upload failed:", data);
+          }
+        } catch (error) {
+          console.error("Error uploading to Cloudinary:", error);
+        }
+      } else {
+        uploadedImageUrls.push(img);
+      }
+    }
+    return uploadedImageUrls;
+  };
+
+  // ✅ Submit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!issueTitle || !issueDescription || !address) {
+      alert("⚠️ Please fill all required fields before submitting.");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const uploadedImageUrls = await uploadImagesToCloudinary();
+
+      const issueData = {
+        title: issueTitle,
+        priority: issuePriority,
+        priorityLevel: issuePriorityLevel,
+        description: issueDescription,
+        nearbyLandmark,
+        address,
+        images: uploadedImageUrls,
+        username: localStorage.getItem("username") || "Anonymous",
+        latitude: mapCenter.lat,
+        longitude: mapCenter.lng,
+        dateReported: new Date().toISOString(),
+        status: "Pending",
+      };
+
+      const response = await fetch("http://localhost:5001/api/issues/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(issueData),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || "Server error");
+      }
+
+      alert("✅ Issue submitted successfully!");
+
+      // reset form
+      setIssueTitle("");
+      setIssuePriority("");
+      setIssuePriorityLevel("");
+      setIssueDescription("");
+      setNearbyLandmark("");
+      setAddress("");
+      setImages([]);
+    } catch (error) {
+      console.error("❌ Error submitting issue:", error);
+      alert("❌ Error submitting issue. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <>
-      <div className="navbar" style={{ display: 'flex', alignItems: 'center' }}>
-        <div className="navbar-logo" style={{ marginRight: '15px' }}>
-          <img src={logo} alt="Clean Street Logo" style={{ height: '40px' }} />
+      {/* Navbar */}
+      <div className="navbar" style={{ display: "flex", alignItems: "center" }}>
+        <div className="navbar-logo" style={{ marginRight: "15px" }}>
+          <img src={logo} alt="Clean Street Logo" style={{ height: "40px" }} />
         </div>
-        <div className="navbar-menu" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexGrow: 1 }}>
-          <button className="navbar-menu-btn" onClick={() => navigate("/dashboard")}>Dashboard</button>
+        <div
+          className="navbar-menu"
+          style={{ display: "flex", alignItems: "center", gap: "10px", flexGrow: 1 }}
+        >
+          <button className="navbar-menu-btn" onClick={() => navigate("/dashboard")}>
+            Dashboard
+          </button>
           <button className="navbar-menu-btn active">Report Issue</button>
-          <button className="navbar-menu-btn" onClick={() => navigate("/complaints")}>view complaints</button>
+          <button className="navbar-menu-btn" onClick={() => navigate("/complaints")}>
+            View Complaints
+          </button>
         </div>
-        <div className="navbar-profile" onClick={() => navigate("/profile")} style={{ cursor: 'pointer' }}>
+        <div
+          className="navbar-profile"
+          onClick={() => navigate("/profile")}
+          style={{ cursor: "pointer" }}
+        >
           <svg viewBox="0 0 24 24" width={24} height={24}>
             <circle cx="12" cy="8" r="4" />
             <path d="M12 14c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z" />
           </svg>
         </div>
       </div>
+
+      {/* Form */}
       <div className="container">
         <h2>Report a Civic Issue</h2>
-        <div className="subtitle">
-          Please fill out this form to raise your issue as a complaint. Your feedback helps us understand local problems better and work towards quick and effective solutions, improving the services in your area.
-        </div>
-        <form>
+        <div className="subtitle">Please fill out this form to raise your issue.</div>
+
+        <form onSubmit={handleSubmit}>
+          {/* Title + Priority */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="issue-title">Issue title :</label>
-              <input
-                type="text"
-                id="issue-title"
-                value={issueTitle}
-                onChange={e => setIssueTitle(e.target.value)}
-              />
+              <label>Issue Title:</label>
+              <input value={issueTitle} onChange={(e) => setIssueTitle(e.target.value)} />
             </div>
-            <div className="image-upload-box">
-              <div className="image-upload-preview">
-                {image && <img src={URL.createObjectURL(image)} alt="" style={{ maxWidth: '100%', maxHeight: '100%' }} />}
-              </div>
-              <div className="image-upload-note">Upload image with size&lt;3Mb (jpg, png, jpeg)</div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={e => setImage(e.target.files[0])}
-                style={{ marginTop: '8px' }}
-              />
-              <button type="button" className="image-upload-btn">Upload</button>
+
+            <div className="form-group">
+              <label>Issue Priority:</label>
+              <select
+                value={issuePriority}
+                onChange={(e) => setIssuePriority(e.target.value)}
+              >
+                <option value="" disabled>Select priority</option>
+                {priorityOptions.map((p) => (
+                  <option key={p}>{p}</option>
+                ))}
+              </select>
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group" style={{ flex: 2 }}>
-              <label htmlFor="issue-desc">Issue Description :</label>
-              <textarea
-                id="issue-desc"
-                value={issueDescription}
-                onChange={e => setIssueDescription(e.target.value)}
-              />
+
+            <div className="form-group">
+              <label>Priority Level:</label>
+              <select
+                value={issuePriorityLevel}
+                onChange={(e) => setIssuePriorityLevel(e.target.value)}
+              >
+                <option value="" disabled>Select level</option>
+                {priorityLevelOptions.map((p) => (
+                  <option key={p}>{p}</option>
+                ))}
+              </select>
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group" style={{ flex: 2 }}>
-              <label htmlFor="address">Address:</label>
+
+            <div className="form-group">
+              <label>Nearby Landmark:</label>
               <input
-                type="text"
-                id="address"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
+                value={nearbyLandmark}
+                onChange={(e) => setNearbyLandmark(e.target.value)}
               />
             </div>
           </div>
+
+          {/* Image Upload */}
+          <div className="image-upload-box">
+            <div className="image-upload-preview" style={{ display: "flex", gap: "10px" }}>
+              {images.slice(0, 3).map((img, i) => (
+                <div key={i} style={{ position: "relative" }}>
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img}
+                    alt=""
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      objectFit: "cover",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="delete-btn"
+                    onClick={() => setImages(images.filter((_, idx) => idx !== i))}
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="image-upload-note">
+              Upload images &lt; 3MB (jpg, png, jpeg)
+            </div>
+
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              id="hidden-file-input"
+              className="image-upload-input"
+              onChange={(e) => setImages([...images, ...Array.from(e.target.files)])}
+            />
+
+            <button
+              type="button"
+              className="image-upload-btn"
+              onClick={() => document.getElementById("hidden-file-input").click()}
+            >
+              Upload
+            </button>
+          </div>
+
+          {/* Description + Address */}
+          <div className="form-group">
+            <label>Issue Description:</label>
+            <textarea
+              value={issueDescription}
+              onChange={(e) => setIssueDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Address:</label>
+            <input value={address} onChange={(e) => setAddress(e.target.value)} />
+          </div>
+
+          {/* Map */}
           <div className="map-section">
             <div className="form-group">
-              <label>Location :</label>
-              <div className="location-note">Please select the location of the issue clearly</div>
-              <div>
-                <MapContainer style={{ height: '260px', width: '100%', borderRadius: '13px', border: '1px solid #c9d9c2' }} center={[11.025, 77.02]} zoom={10} scrollWheelZoom={false}>
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                </MapContainer>
-              </div>
+              <label>Location:</label>
+              <MapContainer
+                style={{
+                  height: "260px",
+                  width: "100%",
+                  borderRadius: "13px",
+                  border: "1px solid #c9d9c2",
+                }}
+                center={mapCenter}
+                zoom={10}
+                scrollWheelZoom={false}
+                whenCreated={(map) => {
+                  map.on("move", () => setMapCenter(map.getCenter()));
+                }}
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              </MapContainer>
             </div>
           </div>
+
+          {/* Confirmation */}
           <div className="checkbox-row">
-            <input type="checkbox" id="confirm" />
+            <input type="checkbox" id="confirm" required />
             <label htmlFor="confirm">
-              I confirm that the information provided above is true and accurate, and I take full responsibility for the details submitted.
+              I confirm that the information provided above is true.
             </label>
           </div>
-          <button className="submit-btn">SUBMIT</button>
+
+          <button className="submit-btn" disabled={uploading}>
+            {uploading ? "Uploading..." : "SUBMIT"}
+          </button>
         </form>
       </div>
     </>
