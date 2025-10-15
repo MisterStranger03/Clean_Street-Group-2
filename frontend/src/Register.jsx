@@ -127,6 +127,7 @@ function Register() {
             <option value="" disabled hidden>Role</option>
             <option value="user">User</option>
             <option value="admin">Admin</option>
+            <option value="volunteer">Volunteer</option>
           </select>
 
           <button type="submit" className="primary-btn">Register</button>

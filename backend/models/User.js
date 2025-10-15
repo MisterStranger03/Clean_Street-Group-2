@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema(
     username: { type: String, default: "" },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, required: true, enum: ['user', 'admin'], default: 'user' },
+    role: { type: String, required: true, enum: ['user', 'admin', 'volunteer'], default: 'user' },
     location: { type: String, default: "" },
     citizenId: { type: String, default: "" },
     resolved: { type: Number, default: 0 },
