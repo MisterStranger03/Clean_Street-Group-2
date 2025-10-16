@@ -172,6 +172,7 @@ body {
   flex-direction: column;
   gap: 32px;
   box-sizing: border-box;
+  padding: 20px 48px; /* Added padding for space on all four sides */
 }
 
 /* Hero section */
@@ -326,6 +327,7 @@ body {
 /* Complaints section panel */
 .complaints-section h2 {
   margin: 0 0 24px;
+  margin-left: 48px; /* Added left margin before the text */
   font-size: 16px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
