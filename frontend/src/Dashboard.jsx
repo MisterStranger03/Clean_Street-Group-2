@@ -102,7 +102,7 @@ const Dashboard = () => {
           <aside className="recent-activity">
             <header>
               <span>Recent Activity</span>
-              <button type="button" className="activity-cta">&gt;</button>
+              <button type="button" className="activity-cta">{'>'}</button>
             </header>
             <ul>
               {activities.map((item) => (
@@ -126,64 +126,64 @@ const Dashboard = () => {
               ))}
             </div>
           </aside>
+        </section>
 
-          <aside className="complaints-section">
-            <h2>Recent Complaints</h2>
-            <div className="complaints-grid">
-              {issues.length === 0 ? (
-                <p style={{ color: "#666" }}>No complaints found.</p>
-              ) : (
-                issues.map((issue) => {
-                  const {
-                    _id,
-                    title = "Untitled Issue",
-                    description = "No description provided",
-                    status = "Open",
-                    location = "Not specified",
-                    date,
-                    images = [],
-                  } = issue;
+        <section className="complaints-section">
+          <h2>Recent Complaints</h2>
+          <div className="complaints-grid">
+            {issues.length === 0 ? (
+              <p style={{ color: "#666" }}>No complaints found.</p>
+            ) : (
+              issues.map((issue) => {
+                const {
+                  _id,
+                  title = "Untitled Issue",
+                  description = "No description provided",
+                  status = "Open",
+                  location = "Not specified",
+                  date,
+                  images = [],
+                } = issue;
 
-                  const imageList =
-                    Array.isArray(images) && images.length > 0
-                      ? images
-                      : ["https://via.placeholder.com/100?text=No+Image"];
+                const imageList =
+                  Array.isArray(images) && images.length > 0
+                    ? images
+                    : ["https://via.placeholder.com/100?text=No+Image"];
 
-                  return (
-                    <div className="complaint-card" key={_id}>
-                      <h4>{title}</h4>
-                      <p className="desc">{description}</p>
-                      <div className={`status-badge ${status.toLowerCase().replace(" ", "-")}`}>
-                        {status}
-                      </div>
-                      <div className="card-footer">
-                        <span>{location}</span>
-                        <span>{formatDate(date)}</span>
-                      </div>
-                      <div className="images">
-                        {imageList.slice(0, 3).map((img, index) => (
-                          <img
-                            key={index}
-                            src={img}
-                            alt="Issue"
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                              objectFit: "cover",
-                              borderRadius: "8px",
-                            }}
-                          />
-                        ))}
-                        {imageList.length > 3 && (
-                          <span>+{imageList.length - 3} more</span>
-                        )}
-                      </div>
+                return (
+                  <div className="complaint-card" key={_id}>
+                    <h4>{title}</h4>
+                    <p className="desc">{description}</p>
+                    <div className={`status-badge ${status.toLowerCase().replace(" ", "-")}`}>
+                      {status}
                     </div>
-                  );
-                })
-              )}
-            </div>
-          </aside>
+                    <div className="card-footer">
+                      <span>{location}</span>
+                      <span>{formatDate(date)}</span>
+                    </div>
+                    <div className="images">
+                      {imageList.slice(0, 3).map((img, index) => (
+                        <img
+                          key={index}
+                          src={img}
+                          alt="Issue"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      ))}
+                      {imageList.length > 3 && (
+                        <span>+{imageList.length - 3} more</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </section>
       </main>
     </div>

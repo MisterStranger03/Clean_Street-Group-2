@@ -19,12 +19,22 @@ body {
 }
 .auth-box {
   background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  width: 350px;
+  padding: 4rem 3rem;                    /* increased padding */
+  border-radius: 20px;                   /* smoother corners */
+  box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+  width: 520px;                          /* wider box */
   text-align: center;
+  transition: all 0.3s ease;
 }
+
+.auth-box img.logo {
+  width: 140px;                          /* larger logo */
+  height: auto;                          /* keeps proportions */
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 1.8rem auto;            /* nicely centered */
+}
+
 .auth-box h2 {
   margin-bottom: 1.5rem;
 }
@@ -189,6 +199,37 @@ img {
   outline: none;
   border-color: #4caf50;
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* Input group styling for required fields */
+.input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.8rem;
+  padding-right: 2rem; /* Make room for asterisk */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  transition: all 0.2s ease;
+  margin-bottom: 0;
+}
+
+.required-asterisk {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 10;
 }
 /* Extra spacing below password input */
 .auth-box input[type="password"] {

@@ -42,20 +42,26 @@ function Login() {
         <img src="logo.png" alt="Clean Street Logo" className="logo" />
         <h2>Login</h2>
         <form onSubmit={handleLogin}>
-          <input 
-            type="email" 
-            placeholder="Email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
-          />
-          <input 
-            type="password" 
-            placeholder="Password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
-          />
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+            <span className="required-asterisk">*</span>
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+            <span className="required-asterisk">*</span>
+          </div>
           <button type="submit" className="primary-btn">Login</button>
         </form>
         <p>

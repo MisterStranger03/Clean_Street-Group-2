@@ -30,14 +30,17 @@ body {
   color: var(--text-strong);
 }
 
+/* Main dashboard container full width */
 .dashboard {
-  max-width: 1320px;
-  margin: 0 auto;
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 40px 48px;
+  padding: 0;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .top-nav {
@@ -141,6 +144,7 @@ body {
   justify-content: center;
   color: #ffffff;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
 }
 
 .profile svg {
@@ -159,12 +163,18 @@ body {
   border: 0;
 }
 
+/* Content area full width */
 .dashboard-content {
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  box-sizing: border-box;
 }
 
+/* Hero section */
 .hero {
   position: relative;
   display: flex;
@@ -183,6 +193,7 @@ body {
   background-position: center;
 }
 
+/* Stats grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -235,12 +246,14 @@ body {
   color: var(--nav-bg);
 }
 
+/* Bottom panels full width in grid */
 .bottom-panels {
   display: grid;
-  grid-template-columns: 1.35fr 0.65fr;
+  grid-template-columns: 1.5fr 1fr;
   gap: 24px;
 }
 
+/* Recent activity panel */
 .recent-activity,
 .quick-actions {
   background: var(--surface);
@@ -301,7 +314,17 @@ body {
   border-bottom: none;
 }
 
+/* Quick actions panel */
 .quick-actions h2 {
+  margin: 0 0 24px;
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Complaints section panel */
+.complaints-section h2 {
   margin: 0 0 24px;
   font-size: 16px;
   letter-spacing: 0.12em;
@@ -344,36 +367,37 @@ body {
   transform: translateY(-2px);
 }
 
-/* -------------------- COMPLAINT SECTION -------------------- */
+/* Complaints section */
 .complaints-section {
   margin-top: 32px;
-  width: 100%;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding: 0; /* Remove side padding */
 }
 
-.complaints-section h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-strong);
-  margin-bottom: 24px;
-}
-
-/* ✅ Fixed layout - 2 cards per row, centered, no right gap */
 .complaints-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 32px;
-  width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px; /* Increased spacing between cards */
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0 48px;
+  box-sizing: border-box;
+  min-height: 100vh; /* Optional: fill vertical space */
 }
 
 .complaint-card {
+  width: 100%;
+  height: 100%;
   background: var(--surface);
   border-radius: var(--radius-medium);
   box-shadow: var(--shadow-soft);
-  padding: 24px;
+  padding: 32px;
   transition: transform 0.2s ease;
-  width: 100%;
 }
 
 .complaint-card:hover {
@@ -402,17 +426,9 @@ body {
   color: #ffffff;
 }
 
-.status-badge.open {
-  background: #e67e22;
-}
-
-.status-badge.in-review {
-  background: #f1c40f;
-}
-
-.status-badge.resolved {
-  background: var(--brand-accent);
-}
+.status-badge.open { background: #e67e22; }
+.status-badge.in-review { background: #f1c40f; }
+.status-badge.resolved { background: var(--brand-accent); }
 
 .card-footer {
   display: flex;
@@ -424,14 +440,31 @@ body {
 
 /* -------------------- RESPONSIVENESS -------------------- */
 @media (max-width: 1024px) {
-  .bottom-panels {
+  .complaints-grid {
     grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 0 16px;
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 720px) {
+  .complaints-section,
+  .complaints-grid {
+    padding: 0 4px;
+  }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .bottom-panels {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 0 16px;
+  }
   .complaints-grid {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 }
 
@@ -454,17 +487,19 @@ body {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(140px, 1fr));
   }
+  .complaints-section,
+  .complaints-grid {
+    padding: 0 4px;
+  }
 }
 
 @media (max-width: 540px) {
   body {
     padding: 16px;
   }
-
   .stats-grid {
     grid-template-columns: 1fr;
   }
-
   .actions .primary,
   .actions .secondary {
     width: 100%;

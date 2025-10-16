@@ -7,6 +7,8 @@ import Register from './Register.jsx';
 import Dashboard from './Dashboard.jsx';
 import Profile from './Profile.jsx';
 import ReportIssue from './ReportIssue.jsx';
+import ViewComplaints from "./ViewComplaints";
+
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/report" element={<ReportIssue />} />
+        <Route path="/complaints" element={<ViewComplaints />} />
+
       </Routes>
     </Router>
   );

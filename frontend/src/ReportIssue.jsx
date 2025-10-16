@@ -117,15 +117,13 @@ export default function ReportIssue() {
   return (
     <>
       {/* Navbar */}
-      <div className="navbar" style={{ display: "flex", alignItems: "center" }}>
-        <div className="navbar-logo" style={{ marginRight: "15px" }}>
-          <img src={logo} alt="Clean Street Logo" style={{ height: "40px" }} />
-        </div>
+      <div className="navbar" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
         <div
           className="navbar-menu"
-          style={{ display: "flex", alignItems: "center", gap: "10px", flexGrow: 1 }}
+          style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "15px" }}
         >
-          <button className="navbar-menu-btn" onClick={() => navigate("/dashboard")}>
+          <button className="navbar-menu-btn" onClick={() => navigate("/dashboard")} style={{ display: "flex", alignItems: "center" }}>
+            <img src={logo} alt="Logo" style={{ height: "36px", marginRight: "8px" }} />
             Dashboard
           </button>
           <button className="navbar-menu-btn active">Report Issue</button>
