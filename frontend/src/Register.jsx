@@ -79,34 +79,46 @@ function Register() {
         <img src="logo.png" alt="Clean Street Logo" className="logo"/>
         <h2>Register</h2>
         <form onSubmit={handleRegister}>
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={e => setFullName(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              required
+            />
+            <span className="required-asterisk">*</span>
+          </div>
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+            />
+            <span className="required-asterisk">*</span>
+          </div>
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+            <span className="required-asterisk">*</span>
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+            <span className="required-asterisk">*</span>
+          </div>
 
           {/* Avatar */}
           <div className="avatar-upload">
@@ -123,12 +135,15 @@ function Register() {
             {avatarPreview && <img src={avatarPreview} alt="Avatar Preview" className="avatar-preview" />}
           </div>
 
-          <select value={role} onChange={e => setRole(e.target.value)} required className="input-box">
-            <option value="" disabled hidden>Role</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-            <option value="volunteer">Volunteer</option>
-          </select>
+          <div className="input-group">
+            <select value={role} onChange={e => setRole(e.target.value)} required>
+              <option value="" disabled hidden>Select Role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="volunteer">Volunteer</option>
+            </select>
+            <span className="required-asterisk">*</span>
+          </div>
 
           <button type="submit" className="primary-btn">Register</button>
           <p>
