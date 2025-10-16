@@ -44,6 +44,24 @@ router.post('/create', async (req, res) => {
 });
 
 // Get all issues
+// router.get('/all', async (req, res) => {
+//   try {
+//     const issues = await Issue.find();
+//     const formattedIssues = issues.map((issue) => ({
+//       _id: issue._id,
+//       title: issue.title,
+//       description: issue.description,
+//       status: issue.status || issue.priority,
+//       location: issue.address,
+//       date: issue.createdAt.toISOString().split('T')[0],
+//       images: issue.images,
+//     }));
+//     res.status(200).json(formattedIssues);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error fetching issues', error });
+//   }
+// });
+
 router.get('/all', async (req, res) => {
   try {
     const issues = await Issue.find();
@@ -53,13 +71,17 @@ router.get('/all', async (req, res) => {
       description: issue.description,
       status: issue.status || issue.priority,
       location: issue.address,
-      date: issue.createdAt.toISOString().split('T')[0],
+      date: issue.createdAt
+        ? issue.createdAt.toISOString().split('T')[0]
+        : 'N/A',
       images: issue.images,
     }));
+
     res.status(200).json(formattedIssues);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching issues', error });
   }
 });
+
 
 module.exports = router;

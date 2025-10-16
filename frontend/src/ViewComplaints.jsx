@@ -8,7 +8,7 @@ export default function ViewComplaints() {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/issues", {
+        const res = await fetch("http://localhost:5001/api/issues/all", {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
@@ -44,7 +44,8 @@ export default function ViewComplaints() {
             <p><b>Description:</b> {issue.description}</p>
             <p><b>Address:</b> {issue.address}</p>
             <p><b>Status:</b> {issue.status}</p>
-            <p><b>Date Reported:</b> {new Date(issue.dateReported).toLocaleString()}</p>
+            <p><b>Date Reported:</b> {new Date(issue.createdAt).toLocaleString()}</p>
+
             {issue.images && issue.images.length > 0 && (
               <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                 {issue.images.map((img, i) => (
