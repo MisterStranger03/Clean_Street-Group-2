@@ -266,3 +266,19 @@ img {
 .link-text:hover {
   color: #0056b3;             /* darker blue on hover */
 }
+
+/* Style asterisk in placeholder text to be red */
+.auth-box input[placeholder="* Email"],
+.auth-box input[placeholder="* Password"] {
+  font-family: "Poppins", sans-serif;
+}
+
+.auth-box input[placeholder="* Email"]::placeholder,
+.auth-box input[placeholder="* Password"]::placeholder {
+  color: #666;
+}
+
+.auth-box input[placeholder*="* "]::placeholder::first-letter {
+  color: #e74c3c;
+  font-weight: bold;
+}

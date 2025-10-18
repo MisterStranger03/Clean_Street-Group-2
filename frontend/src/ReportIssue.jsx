@@ -117,29 +117,40 @@ export default function ReportIssue() {
   return (
     <>
       {/* Navbar */}
-      <div className="navbar" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-        <div
-          className="navbar-menu"
-          style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "15px" }}
-        >
-          <button className="navbar-menu-btn" onClick={() => navigate("/dashboard")} style={{ display: "flex", alignItems: "center" }}>
-            <img src={logo} alt="Logo" style={{ height: "36px", marginRight: "8px" }} />
-            Dashboard
-          </button>
-          <button className="navbar-menu-btn active">Report Issue</button>
-          <button className="navbar-menu-btn" onClick={() => navigate("/complaints")}>
-            View Complaints
-          </button>
+      <header className="top-nav">
+        <div className="brand">
+          <img src={logo} alt="Clean Street Logo" className="brand-logo" />
         </div>
-        <div
-          className="navbar-profile"
-          onClick={() => navigate("/profile")}
-          style={{ cursor: "pointer" }}
-        >
-          <svg viewBox="0 0 24 24" width={24} height={24}>
-            <circle cx="12" cy="8" r="4" />
-            <path d="M12 14c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z" />
+        <nav className="nav-links">
+          <a href="/dashboard">Dashboard</a>
+          <a href="/report" className="active">Report Issue</a>
+          <a href="/complaints">View Complaints</a>
+        </nav>
+        <button type="button" className="profile" onClick={() => navigate("/profile")}>
+          <span className="sr-only">Account</span>
+          <svg viewBox="0 0 24 24" aria-hidden focusable="false">
+            <path
+              d="M12 4.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0 8.5c3.35 0 6 2.22 6 4.96V19.5H6v-1.54C6 15.22 8.65 13 12 13z"
+              fill="currentColor"
+            />
           </svg>
+        </button>
+      </header>
+
+      {/* Back Button - Top Left Corner */}
+      <div className="back-btn-container" style={{
+        position: "absolute",
+        top: "80px",
+        left: "2rem",
+        zIndex: "1000"
+      }}>
+        <div className="back-btn" onClick={() => navigate(-1)} style={{
+          cursor: "pointer",
+          fontSize: "1rem",
+          color: "#5f7f47",
+          fontWeight: "600"
+        }}>
+          ← BACK
         </div>
       </div>
 

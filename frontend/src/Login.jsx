@@ -45,22 +45,20 @@ function Login() {
           <div className="input-group">
             <input
               type="email"
-              placeholder="Email"
+              placeholder="* Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
             />
-            <span className="required-asterisk">*</span>
           </div>
           <div className="input-group">
             <input
               type="password"
-              placeholder="Password"
+              placeholder="* Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
             />
-            <span className="required-asterisk">*</span>
           </div>
           <button type="submit" className="primary-btn">Login</button>
         </form>
