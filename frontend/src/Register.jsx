@@ -82,42 +82,38 @@ function Register() {
           <div className="input-group">
             <input
               type="text"
-              placeholder="Full Name"
+              placeholder="* Full Name"
               value={fullName}
               onChange={e => setFullName(e.target.value)}
               required
             />
-            <span className="required-asterisk">*</span>
           </div>
           <div className="input-group">
             <input
               type="text"
-              placeholder="Username"
+              placeholder="* Username"
               value={username}
               onChange={e => setUsername(e.target.value)}
               required
             />
-            <span className="required-asterisk">*</span>
           </div>
           <div className="input-group">
             <input
               type="email"
-              placeholder="Email"
+              placeholder="* Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
             />
-            <span className="required-asterisk">*</span>
           </div>
           <div className="input-group">
             <input
               type="password"
-              placeholder="Password"
+              placeholder="* Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
             />
-            <span className="required-asterisk">*</span>
           </div>
 
           {/* Avatar */}
@@ -137,12 +133,11 @@ function Register() {
 
           <div className="input-group">
             <select value={role} onChange={e => setRole(e.target.value)} required>
-              <option value="" disabled hidden>Select Role</option>
+              <option value="" disabled hidden>* Select Role</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
               <option value="volunteer">Volunteer</option>
             </select>
-            <span className="required-asterisk">*</span>
           </div>
 
           <button type="submit" className="primary-btn">Register</button>

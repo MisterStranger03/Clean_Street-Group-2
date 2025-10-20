@@ -234,19 +234,19 @@
 }
 
 .image-upload-btn {
-  background-color: #4a7c59;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+    background-color: #5f7f47;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 .image-upload-btn:hover {
-  background-color: #2d5a3d;
+  background-color: #4b6a36;
 }
 
 /* Location Help Text */
@@ -305,7 +305,7 @@
 
 /* Submit Button */
 .submit-btn {
-  background: #2d5a3d;
+  background: #5f7f47;
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -319,9 +319,9 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #1f3d2a;
+  background: #4b6a36;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 90, 61, 0.3);
+  box-shadow: 0 4px 12px rgba(95, 127, 71, 0.3);
 }
 
 .submit-btn:disabled {
@@ -587,7 +587,7 @@ h2 {
     margin-right: 7px;
 }
 .submit-btn {
-    background: #6a7b4e;
+    background: #5f7f47;
     color: #fff;
     border: none;
     border-radius: 18px;
@@ -595,4 +595,9 @@ h2 {
     font-size: 1.08rem;
     cursor: pointer;
     margin-top: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #4b6a36;
 }
