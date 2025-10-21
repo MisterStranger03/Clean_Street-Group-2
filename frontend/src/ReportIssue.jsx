@@ -137,25 +137,21 @@ export default function ReportIssue() {
         </button>
       </header>
 
-      {/* Back Button - Top Left Corner */}
-      <div className="back-btn-container" style={{
-        position: "absolute",
-        top: "80px",
-        left: "2rem",
-        zIndex: "1000"
-      }}>
-        <div className="back-btn" onClick={() => navigate(-1)} style={{
-          cursor: "pointer",
-          fontSize: "1rem",
-          color: "#5f7f47",
-          fontWeight: "600"
-        }}>
-          ← BACK
-        </div>
-      </div>
-
       {/* Form */}
       <div className="container">
+        {/* Back Button */}
+        <div className="back-btn-container">
+          <div className="back-btn" onClick={() => navigate(-1)} style={{
+            cursor: "pointer",
+            fontSize: "1rem",
+            color: "#5f7f47",
+            fontWeight: "600",
+            marginBottom: "1rem"
+          }}>
+            ← BACK
+          </div>
+        </div>
+
         <h2>Report a Civic Issue</h2>
         <div className="subtitle">Please fill out this form to raise your issue.</div>
 
@@ -203,7 +199,13 @@ export default function ReportIssue() {
           </div>
 
           {/* Image Upload */}
-          <div className="image-upload-box">
+          <div className="image-upload-box" style={{
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
             <div className="image-upload-preview" style={{ display: "flex", gap: "10px" }}>
               {images.slice(0, 3).map((img, i) => (
                 <div key={i} style={{ position: "relative" }}>
@@ -215,7 +217,7 @@ export default function ReportIssue() {
                       height: "100px",
                       objectFit: "cover",
                       borderRadius: "5px",
-                      border: "1px solid #ccc",
+                      border: "1px solid #c0cec6",
                     }}
                   />
                   <button
@@ -241,7 +243,7 @@ export default function ReportIssue() {
             </div>
 
             <div className="image-upload-note">
-              Upload images &lt; 3MB (jpg, png, jpeg)
+              Upload images less than 3MB (jpg, png, jpeg)
             </div>
 
             <input

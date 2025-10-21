@@ -102,7 +102,7 @@ export default function ViewComplaints() {
       {/* Back Button - Top Left Corner */}
       <div className="back-btn-container" style={{
         position: "absolute",
-        top: "80px",
+        top: "100px",
         left: "2rem",
         zIndex: "1000"
       }}>
