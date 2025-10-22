@@ -7,6 +7,7 @@ export default function ViewComplaints() {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -116,7 +117,7 @@ export default function ViewComplaints() {
         </div>
       </div>
 
-      <main className="dashboard-content">
+      <main className="dashboard-content" style={selectedComplaint ? {filter: 'blur(5px)', pointerEvents: 'none'} : {}}>
         <div className="content">
           <h2>Reported Complaints</h2>
           {complaints.length === 0 ? (
@@ -124,7 +125,7 @@ export default function ViewComplaints() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               {complaints.map((issue) => (
-                <div key={issue._id} style={{border: "1px solid #ccc", marginBottom: "10px", padding: "10px", borderRadius: "12px"}}>
+                <div key={issue._id} style={{border: "1px solid #ccc", marginBottom: "10px", padding: "10px", borderRadius: "12px", cursor: "pointer"}} onClick={() => setSelectedComplaint(issue)}>
                   <h3 style={{fontSize: "1.4rem", fontWeight: "700", color: "#2d5a3d", marginBottom: "0.8rem"}}>{issue.title}</h3>
                   <p><b>Priority:</b> {issue.priority} (Level {issue.priorityLevel})</p>
                   <p><b>Description:</b> {issue.description}</p>
@@ -134,6 +135,7 @@ export default function ViewComplaints() {
                     <select
                       value={issue.status || ''}
                       onChange={(e) => handleStatusChange(issue._id, e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
                       disabled={updatingStatus === issue._id}
                       style={{
                         padding: "0.25rem 0.5rem",
@@ -165,6 +167,29 @@ export default function ViewComplaints() {
           )}
         </div>
       </main>
+
+      {selectedComplaint && (
+        <div style={{position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <div style={{backgroundColor: 'white', padding: '20px', borderRadius: '8px', maxWidth: '80%', maxHeight: '80%', overflow: 'auto', width: '90%', height: '90%', position: 'relative'}}>
+            <button onClick={() => setSelectedComplaint(null)} style={{position: 'absolute', top: '10px', right: '20px', background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#2d5a3d'}}>×</button>
+            <h2>{selectedComplaint.title}</h2>
+            <div style={{border: '1px solid #ccc', padding: '15px', borderRadius: '8px', marginTop: '10px', display: 'inline-block'}}>
+              <p><b>Priority:</b> {selectedComplaint.priority} (Level {selectedComplaint.priorityLevel})</p>
+              <p><b>Description:</b> {selectedComplaint.description}</p>
+              <p><b>Address:</b> {selectedComplaint.address}</p>
+              <p><b>Status:</b> {selectedComplaint.status}</p>
+              <p><b>Date Reported:</b> {new Date(selectedComplaint.createdAt).toLocaleString()}</p>
+            </div>
+            {selectedComplaint.images && selectedComplaint.images.length > 0 && (
+              <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '10px'}}>
+                {selectedComplaint.images.map((img, i) => (
+                  <img key={i} src={img} alt="Issue" style={{width: '200px', height: '200px', objectFit: 'cover'}} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
