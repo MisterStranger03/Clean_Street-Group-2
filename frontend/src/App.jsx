@@ -8,6 +8,7 @@ import Dashboard from './Dashboard.jsx';
 import Profile from './Profile.jsx';
 import ReportIssue from './ReportIssue.jsx';
 import ViewComplaints from "./ViewComplaints";
+// import AdminDashboard from './admin_dashboard_page';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/report" element={<ReportIssue />} />
         <Route path="/complaints" element={<ViewComplaints />} />
+        {/* <Route path="/admin" element={<AdminDashboard />} /> */}
 
       </Routes>
     </Router>
