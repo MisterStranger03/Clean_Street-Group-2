@@ -10,7 +10,15 @@ const verifyJWT = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+
+    // Ensure required fields are present in req.user
+    req.user = {
+      _id: decoded.id,
+      username: decoded.username || 'Unknown',
+      name: decoded.name || '',
+      avatar: decoded.avatar || '',
+    };
+
     next();
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });

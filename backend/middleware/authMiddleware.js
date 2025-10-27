@@ -12,16 +12,22 @@ const authMiddleware = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('Decoded Token:', decoded);
 
-      req.user = await User.findById(decoded.id).select('-password');
+      const user = await User.findById(decoded.id).select('-password');
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      req.user = user; // Correctly assign the fetched user
+      console.log('Fetched User:', req.user);
 
       next();
     } catch (error) {
+      console.error('Authorization Error:', error.message);
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  if (!token) {
+  } else {
     res.status(401).json({ message: 'Not authorized, no token' });
   }
 };

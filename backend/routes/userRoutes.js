@@ -77,11 +77,15 @@ router.post('/login', async (req, res) => {
 // ===========================
 router.get('/profile', verifyJWT, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    console.log('Request User:', req.user);
+    const user = await User.findById(req.user._id).select('-password'); // Use req.user._id
+    console.log('Fetched Profile User:', user);
+
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json(user); // avatar is Cloudinary URL
   } catch (err) {
+    console.error('Profile Fetch Error:', err.message);
     res.status(500).json({ message: err.message });
   }
 });
