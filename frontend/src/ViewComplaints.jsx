@@ -196,15 +196,38 @@ export default function ViewComplaints() {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString || isNaN(new Date(dateString).getTime())) return "Invalid Date";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-IN", {
+  // Replace existing formatDate with this
+const formatDate = (dateInput) => {
+  if (!dateInput) return "Not available";
+
+  try {
+    let dateString = dateInput;
+
+    // Handle nested MongoDB style: { $date: "..." }
+    if (typeof dateInput === "object" && dateInput.$date) {
+      dateString = dateInput.$date;
+    }
+    // Handle accidentally double-stringified date values: "\"2025-...\""
+    else if (typeof dateInput === "string" && dateInput.startsWith('"')) {
+      dateString = JSON.parse(dateInput);
+    }
+
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return "Invalid Date";
+
+    return d.toLocaleString("en-IN", {
       year: "numeric",
       month: "short",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
-  };
+  } catch (err) {
+    console.error("Error parsing date:", err);
+    return "Invalid Date";
+  }
+};
+
 
   if (loading) return <div>Loading complaints...</div>;
 
@@ -260,7 +283,7 @@ export default function ViewComplaints() {
               {complaints.map((issue) => (
                 <div key={issue._id} style={{border: "1px solid #ccc", marginBottom: "10px", padding: "10px", borderRadius: "12px", cursor: "pointer"}} onClick={() => setSelectedComplaint(issue)}>
                   <h3 style={{fontSize: "1.4rem", fontWeight: "700", color: "#2d5a3d", marginBottom: "0.8rem"}}>{issue.title}</h3>
-                  <p><b>Priority:</b> {issue.priority} (Level {issue.priorityLevel || 'N/A'})</p>
+                  <p><b>Priority:</b> {issue.priority} (Level {issue.priorityLevel ?? 'N/A'})</p>
                   <p><b>Description:</b> {issue.description}</p>
                   <p><b>Address:</b> {issue.address}</p>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
@@ -393,7 +416,8 @@ export default function ViewComplaints() {
                         padding: '4px 12px',
                         borderRadius: '20px'
                       }}>
-                        {selectedComplaint.priority} (Level {selectedComplaint.priorityLevel || 'N/A'})
+                        {selectedComplaint.priority} (Level {selectedComplaint.priorityLevel ?? 'N/A'}
+)
                       </span>
                     </div>
 
@@ -447,7 +471,7 @@ export default function ViewComplaints() {
                         <span style={{fontSize: '0.95rem', color: '#666', fontWeight: '500'}}>Date Reported</span>
                       </div>
                       <span style={{fontSize: '0.9rem', color: '#555'}}>
-                        {selectedComplaint.createdAt ? new Date(selectedComplaint.createdAt).toLocaleString() : 'Invalid Date'}
+                       {formatDate(selectedComplaint.createdAt)}
                       </span>
                     </div>
 
