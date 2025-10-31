@@ -61,6 +61,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+      {/* Top Navbar */}
       <header className="top-nav">
         <div className="brand">
           <img src={logo} alt="Clean Street Logo" className="brand-logo" />
@@ -69,6 +70,7 @@ const Dashboard = () => {
           <a href="/dashboard" className="active">Dashboard</a>
           <a href="/report">Report Issue</a>
           <a href="/complaints">View Complaints</a>
+          <a href="/admin">Admin</a> {/* ✅ Added Admin tab */}
         </nav>
         <button type="button" className="profile" onClick={handleProfileClick}>
           <span className="sr-only">Account</span>
@@ -81,11 +83,13 @@ const Dashboard = () => {
         </button>
       </header>
 
+      {/* Dashboard Main Content */}
       <main className="dashboard-content">
         <section className="hero">
           <div className="hero-illustration" aria-hidden />
         </section>
 
+        {/* Stats */}
         <section className="stats-grid">
           {stats.map(({ label, value, icon }) => (
             <div className="stat-card" key={label}>
@@ -98,6 +102,7 @@ const Dashboard = () => {
           ))}
         </section>
 
+        {/* Bottom panels */}
         <section className="bottom-panels">
           <aside className="recent-activity">
             <header>
@@ -128,6 +133,7 @@ const Dashboard = () => {
           </aside>
         </section>
 
+        {/* Complaints Section */}
         <section className="complaints-section">
           <h2>Recent Complaints</h2>
           <div className="complaints-grid">
