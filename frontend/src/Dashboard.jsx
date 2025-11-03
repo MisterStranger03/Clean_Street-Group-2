@@ -70,7 +70,9 @@ const Dashboard = () => {
           <a href="/dashboard" className="active">Dashboard</a>
           <a href="/report">Report Issue</a>
           <a href="/complaints">View Complaints</a>
-          <a href="/admin">Admin</a> {/* ✅ Added Admin tab */}
+          {localStorage.getItem('role') === 'admin' && (
+  <a href="/admin">Admin</a>
+)}
         </nav>
         <button type="button" className="profile" onClick={handleProfileClick}>
           <span className="sr-only">Account</span>

@@ -6,53 +6,53 @@ import AdminComplaintsTable from "./AdminComplaintsTable";
 import logo from "../assets/logo.jpeg";
 import { useNavigate } from "react-router-dom";
 
-const AdminDashboard = () => {  // ✅ Capital D matches import
+const AdminDashboard = () => {
   const [issues, setIssues] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchIssues = async () => {
+    const fetchComplaints = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/issues/all");
-        if (!res.ok) throw new Error("Network response not ok");
-        const data = await res.json();
+        const res = await fetch("http://localhost:5001/api/issues/all", {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch complaints");
+
+        let data = await res.json();
+
+        // 🧹 Normalize status field and capitalization (e.g., "pending" -> "Pending")
+        data = data.map((item) => ({
+          ...item,
+          status: item.status
+            ? item.status.trim().replace(/\b\w/g, (c) => c.toUpperCase())
+            : "Unknown",
+        }));
+
         setIssues(data);
       } catch (err) {
-        console.warn("Could not fetch issues. Using mock data.", err);
-        setIssues([
-          {
-            _id: "1",
-            title: "Broken streetlight on 5th Ave",
-            description: "Light not working for 3 days",
-            status: "Open",
-            location: "5th Ave, Block B",
-            date: new Date().toISOString(),
-            images: [],
-          },
-          {
-            _id: "2",
-            title: "Garbage dump near market",
-            description: "Smell and pests",
-            status: "In Review",
-            location: "Market Road",
-            date: new Date().toISOString(),
-            images: [],
-          },
-        ]);
+        console.error("Error fetching complaints:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchIssues();
-  }, []);
+    fetchComplaints();
+  }, [token]);
 
   const handleGoToReport = () => navigate("/report");
 
-  const stats = {
-    total: issues.length,
-    open: issues.filter((i) => i.status === "Open").length,
-    inReview: issues.filter((i) => i.status === "In Review").length,
-    resolved: issues.filter((i) => i.status === "Resolved").length,
-  };
+  // 🧮 Dynamically count statuses (handles any type automatically)
+  const statusCounts = issues.reduce((acc, issue) => {
+    const s = issue.status || "Unknown";
+    acc[s] = (acc[s] || 0) + 1;
+    return acc;
+  }, {});
+
+  if (loading) return <div>Loading complaints...</div>;
 
   return (
     <div className="admin-page">
@@ -68,10 +68,13 @@ const AdminDashboard = () => {  // ✅ Capital D matches import
         </header>
 
         <section className="admin-stats-row">
-          <AdminStatsCard title="Total Issues" value={stats.total} />
-          <AdminStatsCard title="Open" value={stats.open} />
-          <AdminStatsCard title="In Review" value={stats.inReview} />
-          <AdminStatsCard title="Resolved" value={stats.resolved} />
+          {/* Total Issues */}
+          <AdminStatsCard title="Total Issues" value={issues.length} />
+
+          {/* Dynamically render cards for all statuses */}
+          {Object.entries(statusCounts).map(([status, count]) => (
+            <AdminStatsCard key={status} title={status} value={count} />
+          ))}
         </section>
 
         <section className="admin-content">
@@ -92,4 +95,4 @@ const AdminDashboard = () => {  // ✅ Capital D matches import
   );
 };
 
-export default AdminDashboard; // ✅ Must match the import name
+export default AdminDashboard;
