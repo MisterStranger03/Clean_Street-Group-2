@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 import "./profile.css";
 
 function Profile() {
@@ -105,12 +106,17 @@ function Profile() {
   };
 
   return (
-    <div className="profile-container">
+    <div className="dashboard">
+      <main className="dashboard-content profile-content">
+        {/* Back Button aligned with complaints page */}
+        <div className="back-btn-container">
+          <button type="button" className="back-btn" onClick={() => navigate(-1)}>
+            ← Back
+          </button>
+        </div>
+        <div className="profile-container">
       {!editMode ? (
         <>
-          <div className="back-btn" onClick={() => navigate(-1)}>
-            ← BACK
-          </div>
           <div className="profile-header">
             <div className="avatar-box">
               <img
@@ -190,27 +196,6 @@ function Profile() {
         </>
       ) : (
         <>
-          <div className="topbar">
-            <div
-              className="logo"
-              onClick={() => handleNavClick("/dashboard")}
-            >
-              CLEAN STREET
-            </div>
-            <nav>
-              <span onClick={() => handleNavClick("/dashboard")}>Dashboard</span>
-              <span onClick={() => handleNavClick("/report")}>Report Issue</span>
-              <span onClick={() => handleNavClick("/complaints")}>
-                View Complaints
-              </span>
-              <span
-                onClick={() => handleNavClick("/profile")}
-                className="profile-icon"
-              >
-                👤
-              </span>
-            </nav>
-          </div>
           <div className="edit-profile-container">
             <h2>Profile Information</h2>
             <div className="edit-form">
@@ -303,6 +288,8 @@ function Profile() {
           </div>
         </>
       )}
+        </div>
+      </main>
     </div>
   );
 }
