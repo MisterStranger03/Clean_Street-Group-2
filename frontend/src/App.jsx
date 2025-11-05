@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './styles.css';  // Import global styles here
+import './styles.css';
 import HomePage from './HomePage.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
@@ -8,7 +8,7 @@ import Dashboard from './Dashboard.jsx';
 import Profile from './Profile.jsx';
 import ReportIssue from './ReportIssue.jsx';
 import ViewComplaints from "./ViewComplaints";
-
+import AdminDashboard from "./components/AdminDashboard";  // ✅ correct import path
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/report" element={<ReportIssue />} />
         <Route path="/complaints" element={<ViewComplaints />} />
-
+        <Route path="/admin" element={<AdminDashboard />} /> {/* ✅ consistent name */}
       </Routes>
     </Router>
   );
