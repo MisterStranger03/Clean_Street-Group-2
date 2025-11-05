@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import logo from "./assets/logo.jpeg";
 import { useNavigate } from "react-router-dom";
+import TopNav from "./components/TopNav/TopNav";
 
 const stats = [
   { label: "Total issues", value: 24, icon: (<svg viewBox="0 0 24 24" aria-hidden focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 10.5a1 1 0 0 1-1-1V7.75a1 1 0 1 1 2 0V12.5a1 1 0 0 1-1 1zm0 3.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z" fill="currentColor"/></svg>) },
@@ -41,10 +41,6 @@ const Dashboard = () => {
     fetchIssues();
   }, []);
 
-  const handleProfileClick = () => {
-    navigate("/profile");
-  };
-
   const handleQuickAction = (action) => {
     navigate(action);
   };
@@ -61,25 +57,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <header className="top-nav">
-        <div className="brand">
-          <img src={logo} alt="Clean Street Logo" className="brand-logo" />
-        </div>
-        <nav className="nav-links">
-          <a href="/dashboard" className="active">Dashboard</a>
-          <a href="/report">Report Issue</a>
-          <a href="/complaints">View Complaints</a>
-        </nav>
-        <button type="button" className="profile" onClick={handleProfileClick}>
-          <span className="sr-only">Account</span>
-          <svg viewBox="0 0 24 24" aria-hidden focusable="false">
-            <path
-              d="M12 4.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0 8.5c3.35 0 6 2.22 6 4.96V19.5H6v-1.54C6 15.22 8.65 13 12 13z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      </header>
+      <TopNav activePath="/dashboard" />
 
       <main className="dashboard-content">
         <section className="hero">
@@ -132,7 +110,7 @@ const Dashboard = () => {
           <h2>Recent Complaints</h2>
           <div className="complaints-grid">
             {issues.length === 0 ? (
-              <p style={{ color: "#666" }}>No complaints found.</p>
+              <p className="complaints-empty">No complaints found.</p>
             ) : (
               issues.map((issue) => {
                 const {
@@ -161,22 +139,17 @@ const Dashboard = () => {
                       <span>{location}</span>
                       <span>{formatDate(date)}</span>
                     </div>
-                    <div className="images">
+                    <div className="complaint-card__images">
                       {imageList.slice(0, 3).map((img, index) => (
                         <img
                           key={index}
                           src={img}
                           alt="Issue"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                            borderRadius: "8px",
-                          }}
+                          className="complaint-card__image"
                         />
                       ))}
                       {imageList.length > 3 && (
-                        <span>+{imageList.length - 3} more</span>
+                        <span className="complaint-card__more">+{imageList.length - 3} more</span>
                       )}
                     </div>
                   </div>
