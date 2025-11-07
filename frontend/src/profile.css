@@ -42,8 +42,6 @@
   color: #2d5a3d;
 }
 
-
-
 /* Profile Header (View Mode) */
 .profile-header {
   display: flex;
@@ -54,6 +52,13 @@
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+}
+
+/* Profile actions container for buttons */
+.profile-actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
 }
 
 /* Edit Profile Header */
@@ -130,10 +135,12 @@
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 .primary-btn:hover {
   background: #5a9444;
 }
+
 .secondary-btn {
   background: #ddd;
   color: #333;
@@ -141,9 +148,25 @@
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 .secondary-btn:hover {
   background: #bbb;
+}
+
+/* Logout button */
+.logout-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-weight: 500;
+}
+.logout-btn:hover {
+  background: #c82333;
 }
 
 /* Account Info */
@@ -323,9 +346,15 @@
     order: 0;
   }
 
-  .profile-header .primary-btn {
+  .profile-header .profile-actions {
     order: 1;
-    align-self: center;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .profile-actions .primary-btn,
+  .profile-actions .logout-btn {
+    width: 100%;
   }
 
   .avatar-large {
@@ -450,7 +479,8 @@
 
   /* Improve touch targets (exclude camera button to keep it 25px) */
   .primary-btn,
-  .secondary-btn {
+  .secondary-btn,
+  .logout-btn {
     min-height: 44px;
     min-width: 44px;
   }
