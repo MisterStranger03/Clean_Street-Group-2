@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
 import TopNav from "./components/TopNav/TopNav";
+import logo from "./assets/logo.jpeg";
+
+
 
 const stats = [
   { label: "Total issues", value: 24, icon: (<svg viewBox="0 0 24 24" aria-hidden focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 10.5a1 1 0 0 1-1-1V7.75a1 1 0 1 1 2 0V12.5a1 1 0 0 1-1 1zm0 3.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z" fill="currentColor"/></svg>) },
@@ -9,6 +12,8 @@ const stats = [
   { label: "In Review", value: 11, icon: (<svg viewBox="0 0 24 24" aria-hidden focusable="false"><path d="M6.5 4h11A1.5 1.5 0 0 1 19 5.5v11.88l-4.24-3.24H6.5A1.5 1.5 0 0 1 5 12.64V5.5A1.5 1.5 0 0 1 6.5 4zm.5 2v6.64h7.02L17 15.7V6H7z" fill="currentColor"/></svg>) },
   { label: "Resolved", value: 4, icon: (<svg viewBox="0 0 24 24" aria-hidden focusable="false"><path d="M19 5.5 9.75 14.74l-4.5-4.49L5.66 9l4.09 4.1L17.59 5.2 19 5.5z" fill="currentColor"/></svg>) },
 ];
+
+
 
 const activities = [
   "New streetlight issue reported",
@@ -44,6 +49,10 @@ const Dashboard = () => {
   const handleQuickAction = (action) => {
     navigate(action);
   };
+
+  const handleProfileClick = () => {
+  navigate("/profile");
+};
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
