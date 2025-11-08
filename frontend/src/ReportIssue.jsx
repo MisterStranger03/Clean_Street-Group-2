@@ -80,7 +80,7 @@ export default function ReportIssue() {
         latitude: mapCenter.lat,
         longitude: mapCenter.lng,
         dateReported: new Date().toISOString(),
-        status: "Pending",
+        status: "Open",
       };
 
       const response = await fetch("http://localhost:5001/api/issues/create", {
