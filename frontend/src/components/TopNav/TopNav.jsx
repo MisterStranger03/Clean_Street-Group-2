@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.jpeg";
 import "./TopNav.css";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { label: "Dashboard", path: "/dashboard" },
   { label: "Report Issue", path: "/report" },
   { label: "View Complaints", path: "/complaints" },
@@ -15,6 +15,16 @@ const TopNav = ({ activePath, onProfileClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const currentPath = activePath || location.pathname;
+
+  // Detect admin user — change this if you store admin elsewhere
+  const isAdmin =
+    localStorage.getItem("role") === "admin" ||
+    localStorage.getItem("isAdmin") === "true";
+
+  // Build nav list dynamically (adds Admin only for admins)
+  const navItems = isAdmin
+    ? [...BASE_NAV_ITEMS, { label: "Admin", path: "/admin" }]
+    : BASE_NAV_ITEMS;
 
   const handleNavigate = (path) => {
     setMenuOpen(false);
@@ -33,8 +43,16 @@ const TopNav = ({ activePath, onProfileClick }) => {
   };
 
   return (
-    <header className={`top-nav ${menuOpen ? "nav-open" : ""}`}>
-      <button type="button" className="brand" onClick={() => handleNavigate("/dashboard")}>
+    <header
+      className={`top-nav ${menuOpen ? "nav-open" : ""} ${
+        currentPath === "/dashboard" ? "top-nav--dashboard" : ""
+      }`}
+    >
+      <button
+        type="button"
+        className="brand"
+        onClick={() => handleNavigate("/dashboard")}
+      >
         <span className="sr-only">Go to dashboard</span>
         <img src={logo} alt="Clean Street" className="brand-logo" />
       </button>
@@ -76,7 +94,7 @@ const TopNav = ({ activePath, onProfileClick }) => {
       </button>
 
       <nav className={`nav-links ${menuOpen ? "is-open" : ""}`}>
-        {NAV_ITEMS.map(({ label, path }) => (
+        {navItems.map(({ label, path }) => (
           <a
             key={path}
             href={path}

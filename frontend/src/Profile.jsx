@@ -101,6 +101,17 @@ function Profile() {
     }
   };
 
+  // Logout handler
+  const handleLogout = () => {
+    // Clear all auth data from localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
+    
+    // Redirect to login page
+    navigate("/login");
+  };
+
   const handleNavClick = (path) => {
     navigate(path);
   };
@@ -136,9 +147,14 @@ function Profile() {
               <h2>{user.name}</h2>
               <p>Citizen Id: {user.citizenId}</p>
             </div>
-            <button className="primary-btn" onClick={() => setEditMode(true)}>
-              Edit Profile
-            </button>
+            <div className="profile-actions">
+              <button className="primary-btn" onClick={() => setEditMode(true)}>
+                Edit Profile
+              </button>
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
             <input
                   type="file"
                   ref={fileInputRef}
