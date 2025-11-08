@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Doughnut, Bar } from "react-chartjs-2";
+import { Doughnut, Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -9,6 +9,8 @@ import {
   LinearScale,
   BarElement,
   Title,
+  PointElement,
+  LineElement,
 } from "chart.js";
 import "./AdminDashboard.css";
 import AdminSidebar from "./AdminSidebar";
@@ -21,7 +23,9 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  Title
+  Title,
+  PointElement,
+  LineElement
 );
 
 function normalizeStatus(statusRaw) {
@@ -47,29 +51,76 @@ function isDateToday(d) {
 
 const AdminReports = () => {
   const [issues, setIssues] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [timeView, setTimeView] = useState("daily"); // 'daily' or 'monthly'
+  const [usersLoaded, setUsersLoaded] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchIssues = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5001/api/issues/all", {
+        
+        // Fetch issues
+        const issuesRes = await fetch("http://localhost:5001/api/issues/all", {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
-        if (!res.ok) throw new Error("Failed to fetch issues");
-        const data = await res.json();
-        setIssues(Array.isArray(data) ? data : []);
+        if (!issuesRes.ok) throw new Error("Failed to fetch issues");
+        const issuesData = await issuesRes.json();
+        setIssues(Array.isArray(issuesData) ? issuesData : []);
+
+        // Try to fetch users (optional - backend may not be ready)
+        try {
+          const usersRes = await fetch("http://localhost:5001/api/users/all", {
+            headers: {
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          });
+          if (usersRes.ok) {
+            const usersData = await usersRes.json();
+            setUsers(Array.isArray(usersData) ? usersData : []);
+            setUsersLoaded(true);
+          } else {
+            console.warn("Users endpoint not available yet - using placeholder data");
+            // Use placeholder data for demo
+            setUsers([
+              { role: "user" },
+              { role: "user" },
+              { role: "user" },
+              { role: "user" },
+              { role: "user" },
+              { role: "volunteer" },
+              { role: "volunteer" },
+              { role: "admin" },
+            ]);
+            setUsersLoaded(false);
+          }
+        } catch (userError) {
+          console.warn("Users endpoint not available - using placeholder data");
+          // Use placeholder data for demo
+          setUsers([
+            { role: "user" },
+            { role: "user" },
+            { role: "user" },
+            { role: "user" },
+            { role: "user" },
+            { role: "volunteer" },
+            { role: "volunteer" },
+            { role: "admin" },
+          ]);
+          setUsersLoaded(false);
+        }
       } catch (e) {
         setError(e.message || "Failed to load reports");
       } finally {
         setLoading(false);
       }
     };
-    fetchIssues();
+    fetchData();
   }, [token]);
 
   const { statusCounts, priorityCounts, total, open, closed, closedToday } = useMemo(() => {
@@ -83,7 +134,6 @@ const AdminReports = () => {
     for (const issue of issues) {
       totalCount += 1;
       
-      // Status counts
       const bucket = normalizeStatus(issue?.status);
       statuses[bucket] = (statuses[bucket] || 0) + 1;
       if (bucket === "Open") openCount += 1;
@@ -92,7 +142,6 @@ const AdminReports = () => {
         if (isDateToday(issue?.createdAt)) closedTodayCount += 1;
       }
 
-      // Priority counts
       const priority = issue?.priority || "Unknown";
       priorities[priority] = (priorities[priority] || 0) + 1;
     }
@@ -106,6 +155,86 @@ const AdminReports = () => {
       closedToday: closedTodayCount,
     };
   }, [issues]);
+
+  // User role distribution
+  const userRoleCounts = useMemo(() => {
+    const counts = { users: 0, volunteers: 0 };
+    for (const user of users) {
+      if (user.role === "volunteer" || user.role === "admin") {
+        counts.volunteers += 1;
+      } else {
+        counts.users += 1;
+      }
+    }
+    return counts;
+  }, [users]);
+
+  // Time-based complaints data
+  const timeBasedData = useMemo(() => {
+    if (timeView === "daily") {
+      // Last 7 days
+      const daysMap = {};
+      const today = new Date();
+      
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        daysMap[key] = 0;
+      }
+
+      for (const issue of issues) {
+        try {
+          const date = new Date(issue.createdAt);
+          const key = date.toISOString().split('T')[0];
+          if (daysMap.hasOwnProperty(key)) {
+            daysMap[key] += 1;
+          }
+        } catch (e) {
+          // skip invalid dates
+        }
+      }
+
+      return {
+        labels: Object.keys(daysMap).map(d => {
+          const date = new Date(d);
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }),
+        data: Object.values(daysMap),
+      };
+    } else {
+      // Last 6 months
+      const monthsMap = {};
+      const today = new Date();
+      
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        monthsMap[key] = 0;
+      }
+
+      for (const issue of issues) {
+        try {
+          const date = new Date(issue.createdAt);
+          const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          if (monthsMap.hasOwnProperty(key)) {
+            monthsMap[key] += 1;
+          }
+        } catch (e) {
+          // skip invalid dates
+        }
+      }
+
+      return {
+        labels: Object.keys(monthsMap).map(m => {
+          const [year, month] = m.split('-');
+          const date = new Date(year, parseInt(month) - 1);
+          return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }),
+        data: Object.values(monthsMap),
+      };
+    }
+  }, [issues, timeView]);
 
   // Status Distribution Doughnut Chart
   const statusDoughnutData = useMemo(() => {
@@ -148,6 +277,21 @@ const AdminReports = () => {
       ],
     };
   }, [priorityCounts]);
+
+  // User Role Distribution Pie Chart
+  const userRolePieData = useMemo(() => {
+    return {
+      labels: ["Users", "Volunteers"],
+      datasets: [
+        {
+          label: "Count",
+          data: [userRoleCounts.users, userRoleCounts.volunteers],
+          backgroundColor: ["#3b82f6", "#8b5cf6"],
+          borderWidth: 0,
+        },
+      ],
+    };
+  }, [userRoleCounts]);
 
   const doughnutOptions = {
     responsive: true,
@@ -220,6 +364,54 @@ const AdminReports = () => {
     },
   };
 
+  // Line Chart Data
+  const lineChartData = useMemo(() => {
+    return {
+      labels: timeBasedData.labels,
+      datasets: [
+        {
+          label: `${timeView === 'daily' ? 'Daily' : 'Monthly'} Complaints`,
+          data: timeBasedData.data,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          tension: 0.4,
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        },
+      ],
+    };
+  }, [timeBasedData, timeView]);
+
+  const lineChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: true },
+    },
+    scales: {
+      y: { 
+        beginAtZero: true,
+        ticks: { 
+          precision: 0,
+          font: { size: 11 }
+        },
+        grid: {
+          color: "#f1f5f9"
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: { size: 11 }
+        }
+      }
+    },
+  };
+
   if (loading) {
     return (
       <div className="admin-page">
@@ -270,8 +462,8 @@ const AdminReports = () => {
           </div>
         </section>
 
-        {/* Charts Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 20, marginTop: 10 }}>
+        {/* Charts Grid - Row 1: Three Doughnut/Pie Charts */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 20, marginTop: 10 }}>
           {/* Status Distribution */}
           <div className="card" style={{ minHeight: 320 }}>
             <h3 style={{ margin: "0 0 16px 0", fontSize: 16, fontWeight: 600, color: "#1a2a1a" }}>
@@ -292,13 +484,83 @@ const AdminReports = () => {
             </div>
           </div>
 
+          {/* User Role Distribution */}
+          <div className="card" style={{ minHeight: 320, position: "relative" }}>
+            <h3 style={{ margin: "0 0 16px 0", fontSize: 16, fontWeight: 600, color: "#1a2a1a" }}>
+              Users vs Volunteers
+              {!usersLoaded && (
+                <span style={{ 
+                  fontSize: 11, 
+                  color: "#f59e0b", 
+                  marginLeft: 8,
+                  fontWeight: 400,
+                  background: "#fef3c7",
+                  padding: "2px 8px",
+                  borderRadius: 4
+                }}>
+                  Demo Data
+                </span>
+              )}
+            </h3>
+            <div style={{ height: 260 }}>
+              <Doughnut data={userRolePieData} options={{...doughnutOptions, plugins: {...doughnutOptions.plugins, title: undefined}}} />
+            </div>
+          </div>
+        </div>
+
+        {/* Charts Grid - Row 2: Bar Chart and Line Chart */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 20, marginTop: 20 }}>
           {/* Summary Bar Chart */}
-          <div className="card" style={{ minHeight: 320, gridColumn: "1 / -1" }}>
+          <div className="card" style={{ minHeight: 320 }}>
             <h3 style={{ margin: "0 0 16px 0", fontSize: 16, fontWeight: 600, color: "#1a2a1a" }}>
               Summary Overview
             </h3>
             <div style={{ height: 260 }}>
               <Bar data={barData} options={barOptions} />
+            </div>
+          </div>
+
+          {/* Complaints Timeline Line Chart */}
+          <div className="card" style={{ minHeight: 320 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#1a2a1a" }}>
+                Complaints Timeline
+              </h3>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  onClick={() => setTimeView("daily")}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: 13,
+                    fontWeight: timeView === "daily" ? 600 : 400,
+                    color: timeView === "daily" ? "#fff" : "#667",
+                    backgroundColor: timeView === "daily" ? "#3b82f6" : "#f1f5f9",
+                    border: "none",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                  }}
+                >
+                  Daily
+                </button>
+                <button
+                  onClick={() => setTimeView("monthly")}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: 13,
+                    fontWeight: timeView === "monthly" ? 600 : 400,
+                    color: timeView === "monthly" ? "#fff" : "#667",
+                    backgroundColor: timeView === "monthly" ? "#3b82f6" : "#f1f5f9",
+                    border: "none",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                  }}
+                >
+                  Monthly
+                </button>
+              </div>
+            </div>
+            <div style={{ height: 260 }}>
+              <Line data={lineChartData} options={lineChartOptions} />
             </div>
           </div>
         </div>
@@ -320,6 +582,13 @@ const AdminReports = () => {
               <div style={{ fontSize: 18, fontWeight: 600 }}>{open}</div>
             </div>
             <div style={{ padding: 12, background: "#f8faf8", borderRadius: 8 }}>
+              <div style={{ fontSize: 13, color: "#667", marginBottom: 4 }}>Total Users</div>
+              <div style={{ fontSize: 18, fontWeight: 600 }}>
+                {users.length}
+                {!usersLoaded && <span style={{ fontSize: 11, color: "#f59e0b", marginLeft: 4 }}>*</span>}
+              </div>
+            </div>
+            <div style={{ padding: 12, background: "#f8faf8", borderRadius: 8 }}>
               <div style={{ fontSize: 13, color: "#667", marginBottom: 4 }}>Avg. Priority Level</div>
               <div style={{ fontSize: 18, fontWeight: 600 }}>
                 {issues.length > 0 
@@ -328,6 +597,18 @@ const AdminReports = () => {
               </div>
             </div>
           </div>
+          {!usersLoaded && (
+            <div style={{ 
+              marginTop: 12, 
+              padding: 8, 
+              background: "#fef3c7", 
+              borderRadius: 6,
+              fontSize: 12,
+              color: "#92400e"
+            }}>
+              * Users data is placeholder. Backend team needs to add GET /api/users/all endpoint.
+            </div>
+          )}
         </div>
       </div>
     </div>
