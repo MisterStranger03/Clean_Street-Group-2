@@ -67,28 +67,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       {/* Top Navbar */}
-      <header className="top-nav">
-        <div className="brand">
-          <img src={logo} alt="Clean Street Logo" className="brand-logo" />
-        </div>
-        <nav className="nav-links">
-          <a href="/dashboard" className="active">Dashboard</a>
-          <a href="/report">Report Issue</a>
-          <a href="/complaints">View Complaints</a>
-          {localStorage.getItem('role') === 'admin' && (
-  <a href="/admin">Admin</a>
-)}
-        </nav>
-        <button type="button" className="profile" onClick={handleProfileClick}>
-          <span className="sr-only">Account</span>
-          <svg viewBox="0 0 24 24" aria-hidden focusable="false">
-            <path
-              d="M12 4.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0 8.5c3.35 0 6 2.22 6 4.96V19.5H6v-1.54C6 15.22 8.65 13 12 13z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      </header>
+      <TopNav activePath="/dashboard" onProfileClick={handleProfileClick} />
 
       {/* Dashboard Main Content */}
       <main className="dashboard-content">
@@ -187,6 +166,7 @@ const Dashboard = () => {
                         <span className="complaint-card__more">+{imageList.length - 3} more</span>
                       )}
                     </div>
+                    <button className="complaint-card__button">View Details</button>
                   </div>
                 );
               })
