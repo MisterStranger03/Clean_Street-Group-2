@@ -15,11 +15,80 @@ const stats = [
 
 
 
-const activities = [
-  "New streetlight issue reported",
-  "Garbage dumped complaint",
-  "Problem on main street",
-];
+// Activity logs will be fetched from the server (status changes made by volunteers/admins)
+// helper to render a single log message if some fields are missing
+// const renderLogMessage = (log) => {
+//   const actor = log.actor || log.user || 'Unknown';
+//   const action = log.action || log.status || 'updated';
+//   const issueTitle = (log.issue && log.issue.title) || log.issueTitle || 'an issue';
+//   const timestamp = log.timestamp || log.date || log.createdAt || null;
+
+//   return {
+//     text: `${actor} changed status to ${action} on ${issueTitle}`,
+//     time: timestamp,
+//   };
+// };
+
+// tolerant, human-friendly renderLogMessage
+// const renderLogMessage = (log) => {
+//   // Resolve actor (prefer friendly string)
+//   let actor =
+//     log.actor ||
+//     (log.user && (log.user.username || log.user.name || log.user.email)) ||
+//     (typeof log.user === 'string' ? log.user : (log.user && log.user._id) ? String(log.user._id) : null) ||
+//     (log.performedBy || log.username || null) ||
+//     'Someone';
+
+//   // Try to find previous/new status from meta first
+//   const previousStatus = (log.meta && (log.meta.previousStatus || log.meta.oldStatus)) || null;
+//   const newStatus = (log.meta && (log.meta.newStatus || log.meta.newStatus)) || log.action || log.status || null;
+
+//   // Issue identifier: prefer human title, otherwise issueId or parse from details
+//   let issueLabel = null;
+//   if (log.issueTitle) issueLabel = log.issueTitle;
+//   else if (log.issue && (log.issue.title || log.issue._id)) issueLabel = log.issue.title || String(log.issue._id);
+//   else if (log.issueId) issueLabel = String(log.issueId);
+//   else if (typeof log.details === 'string') {
+//     // fallback: try to extract a 24-char hex id from details
+//     const m = log.details.match(/([0-9a-fA-F]{24})/);
+//     issueLabel = m ? `Issue ${m[1]}` : log.details.substring(0, 60);
+//   } else {
+//     issueLabel = 'an issue';
+//   }
+
+//   // Timestamp
+//   const time = log.timestamp || log.date || log.createdAt || null;
+
+//   // Compose message:
+//   let text;
+//   if (previousStatus && newStatus) {
+//     // e.g. "Raman updated the status of Main street light (Issue 68...) from Closed to Open"
+//     text = `${actor} updated the status of ${issueLabel} from ${previousStatus} to ${newStatus}`;
+//   } else if (typeof log.details === 'string' && log.details.trim().length > 0) {
+//     // use existing human readable details if present
+//     text = log.details;
+//   } else {
+//     // fallback
+//     text = `${actor} changed status to ${newStatus || 'updated'} on ${issueLabel}`;
+//   }
+
+//   return { text, time };
+// };
+
+const renderLogMessage = (log) => {
+  const actor = log.actor || (log.user && (log.user.username || log.user.name || log.user.email)) || 'Someone';
+  const prev = log.meta && (log.meta.previousStatus || log.meta.oldStatus);
+  const next = log.meta && (log.meta.newStatus || log.meta.newStatus) || log.action || log.status;
+  const issueLabel = log.issueTitle || (log.issue && (log.issue.title || String(log.issue._id))) || (log.issueId ? `Issue ${String(log.issueId)}` : 'an issue');
+  const time = log.timestamp || log.createdAt || log.date || null;
+
+  let text;
+  if (prev && next) text = `${actor} updated the Status of ${issueLabel} from ${prev} to ${next}`;
+  else if (typeof log.details === 'string' && log.details.trim().length) text = log.details;
+  else text = `${actor} changed status to ${next || 'updated'} on ${issueLabel}`;
+
+  return { text, time };
+};
 
 const quickActions = [
   { label: "Report issues here", primary: true, action: "/report" },
@@ -28,6 +97,7 @@ const quickActions = [
 
 const Dashboard = () => {
   const [issues, setIssues] = useState([]);
+  const [logs, setLogs] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +113,21 @@ const Dashboard = () => {
       }
     };
 
+    const fetchLogs = async () => {
+      try {
+        // Adjust endpoint as per your backend (eg: /api/logs or /api/issues/logs)
+        const res = await fetch("http://localhost:5001/api/logs");
+        if (!res.ok) throw new Error("Failed to fetch logs");
+        const logData = await res.json();
+        console.log("Fetched logs:", logData);
+        setLogs(Array.isArray(logData) ? logData : []);
+      } catch (err) {
+        console.error("Error fetching logs:", err);
+      }
+    };
+
     fetchIssues();
+    fetchLogs();
   }, []);
 
   const handleQuickAction = (action) => {
@@ -96,9 +180,21 @@ const Dashboard = () => {
               <button type="button" className="activity-cta">{'>'}</button>
             </header>
             <ul>
-              {activities.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
+              {logs.length === 0 ? (
+                <li className="no-logs">No recent activity.</li>
+              ) : (
+                logs.map((log) => {
+                  const { text, time } = renderLogMessage(log);
+                  const key = log._id || log.id || `${log.issue?._id||log.issueId||'unknown'}-${time}`;
+
+                  return (
+                    <li key={key} className="log-entry">
+                      <div className="log-text">{text}</div>
+                      <div className="log-time">{time ? formatDate(time) : ''}</div>
+                    </li>
+                  );
+                })
+              )}
             </ul>
           </aside>
 
