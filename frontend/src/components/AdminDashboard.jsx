@@ -47,7 +47,6 @@ const AdminDashboard = () => {
     fetchComplaints();
   }, [token]);
 
-  const handleGoToReport = () => navigate("/report");
   const handleGoBack = () => navigate("/dashboard");
 
   // Apply filters
@@ -93,11 +92,6 @@ const AdminDashboard = () => {
               ← Back
             </button>
             <h1>Admin Dashboard</h1>
-          </div>
-          <div className="admin-top-actions">
-            <button className="btn" onClick={handleGoToReport}>
-              Report Issue
-            </button>
           </div>
         </header>
 

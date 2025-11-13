@@ -316,8 +316,10 @@ body {
 }
 
 .status-badge.open { background: #e67e22; }
-.status-badge.in-review { background: #f1c40f; }
+.status-badge.in-review { background: #f1c40f; color: #1f1f1f; }
 .status-badge.resolved { background: var(--brand-accent); }
+.status-badge.close { background: #6c757d; }
+.status-badge.pending { background: #f39c12; }
 
 .card-footer {
   display: flex;

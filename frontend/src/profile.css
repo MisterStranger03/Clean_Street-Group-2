@@ -21,7 +21,7 @@
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  margin: 0 0 clamp(8px, 2vw, 14px);
+  margin: 40px 0 10px;
   padding: 0 clamp(1rem, 4vw, 2rem);
 }
 
@@ -36,6 +36,7 @@
   font-family: inherit;
   transition: color 0.2s ease;
   margin-bottom: 1rem;
+  margin-top: 40px;
 }
 
 .back-btn:hover,
@@ -53,6 +54,7 @@
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+  margin-top: -10px;
 }
 
 /* Profile actions container for buttons */
@@ -268,9 +270,8 @@
 }
 
 .edit-profile-container .camera-btn {
-  top: auto;
-  bottom: 6px;
-  right: 6px;
+  bottom: 0px;
+  right: 0px;
 }
 
 
