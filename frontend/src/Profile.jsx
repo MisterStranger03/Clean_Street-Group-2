@@ -112,9 +112,7 @@ function Profile() {
     navigate("/login");
   };
 
-  const handleNavClick = (path) => {
-    navigate(path);
-  };
+
 
   return (
     <div className="dashboard">
@@ -135,7 +133,7 @@ function Profile() {
                   alt="User Avatar"
                   className="avatar-large"
               />
-              <button 
+              <button
                className="camera-btn"
                   onClick={() => fileInputRef.current && fileInputRef.current.click()}
                   disabled={uploading}

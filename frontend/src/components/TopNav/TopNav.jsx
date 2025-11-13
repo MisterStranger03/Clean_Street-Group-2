@@ -44,9 +44,7 @@ const TopNav = ({ activePath, onProfileClick }) => {
 
   return (
     <header
-      className={`top-nav ${menuOpen ? "nav-open" : ""} ${
-        currentPath === "/dashboard" ? "top-nav--dashboard" : ""
-      }`}
+      className={`top-nav ${menuOpen ? "nav-open" : ""}`}
     >
       <button
         type="button"

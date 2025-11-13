@@ -167,7 +167,7 @@
 .btn-filter {
   padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid #3d6b3c;
+  border: none;
   background: transparent;
   color: #3d6b3c;
   cursor: pointer;
