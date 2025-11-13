@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
 import TopNav from "./components/TopNav/TopNav";
-import logo from "./assets/logo.jpeg";
 
 
 
@@ -137,6 +136,17 @@ const Dashboard = () => {
                   images = [],
                 } = issue;
 
+                // Normalize status display
+                const normalizeStatus = (status) => {
+                  const s = status.toLowerCase();
+                  if (s.includes("close") || s.includes("resolve")) return "Close";
+                  if (s.includes("pending")) return "Pending";
+                  if (s.includes("open")) return "Open";
+                  return status;
+                };
+
+                const displayStatus = normalizeStatus(status);
+
                 const imageList =
                   Array.isArray(images) && images.length > 0
                     ? images
@@ -146,8 +156,8 @@ const Dashboard = () => {
                   <div className="complaint-card" key={_id}>
                     <h4>{title}</h4>
                     <p className="desc">{description}</p>
-                    <div className={`status-badge ${status.toLowerCase().replace(" ", "-")}`}>
-                      {status}
+                    <div className={`status-badge ${displayStatus.toLowerCase().replace(" ", "-")}`}>
+                      {displayStatus}
                     </div>
                     <div className="card-footer">
                       <span>{location}</span>
@@ -166,7 +176,6 @@ const Dashboard = () => {
                         <span className="complaint-card__more">+{imageList.length - 3} more</span>
                       )}
                     </div>
-                    <button className="complaint-card__button">View Details</button>
                   </div>
                 );
               })

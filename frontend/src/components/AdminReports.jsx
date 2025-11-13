@@ -75,7 +75,7 @@ const AdminReports = () => {
 
         // Try to fetch users (optional - backend may not be ready)
         try {
-          const usersRes = await fetch("http://localhost:5001/api/users/all", {
+          const usersRes = await fetch("http://localhost:5001/api/users", {
             headers: {
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
@@ -724,7 +724,7 @@ const AdminReports = () => {
               fontSize: 12,
               color: "#92400e"
             }}>
-              * Users data is placeholder. Backend team needs to add GET /api/users/all endpoint.
+              * Users data is placeholder. Backend team needs to add GET /api/users endpoint.
             </div>
           )}
         </div>
