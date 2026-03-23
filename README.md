@@ -1,70 +1,188 @@
-# Getting Started with Create React App
+# Clean Street
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**A MERN-based Civic Issue Reporting and Tracking System**
 
-## Available Scripts
+Clean Street is a full-stack web application that empowers citizens to report, track, and monitor civic issues in their locality from broken roads to overflowing garbage with geotagged photos and real time status updates.
 
-In the project directory, you can run:
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-404D59?style=flat&logo=express)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat&logo=cloudinary&logoColor=white)](https://cloudinary.com/)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 📋 Table of Contents
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [API Reference](#api-reference)
+- [Contributors](#contributors)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Overview
 
-### `npm run build`
+Clean Street bridges the gap between citizens and civic authorities. Users can submit complaints about local issues with photographic evidence and geolocation data. A dedicated dashboard lets users monitor the status of submitted complaints, while the interactive Leaflet map visualizes reported issues across the city.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Features
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 🔐 **User Authentication** — Secure sign-up and login with JWT-based session management
+- 📸 **Image Uploads** — Attach photos to complaints, stored and served via Cloudinary
+- 📍 **Geolocation Mapping** — Interactive Leaflet.js map displaying all reported issues with pin markers
+- 📋 **Complaint Dashboard** — Track the status of submitted complaints (Pending / In Progress / Resolved)
+- 🗂️ **Issue Categorisation** — Report issues by type (roads, sanitation, lighting, water supply, etc.)
+- 📱 **Responsive UI** — Works across desktop and mobile screen sizes
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Tech Stack
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| Layer | Technology |
+|---|---|
+| **Frontend** | React.js (Create React App), CSS |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB (Mongoose ODM) |
+| **Media Storage** | Cloudinary |
+| **Maps** | Leaflet.js |
+| **Authentication** | JSON Web Tokens (JWT), bcrypt |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Project Structure
 
-## Learn More
+```
+Clean_Street-Group-2/
+├── backend/
+│   ├── config/          # DB connection, Cloudinary config
+│   ├── controllers/     # Route handler logic
+│   ├── middleware/       # Auth middleware (JWT verification)
+│   ├── models/          # Mongoose schemas (User, Complaint)
+│   ├── routes/          # Express route definitions
+│   └── server.js        # Entry point
+│
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── components/  # Reusable UI components (Map, ComplaintCard, Navbar, etc.)
+│       ├── pages/       # Route-level pages (Home, Login, Register, Dashboard, Report)
+│       ├── context/     # Auth context / global state
+│       ├── utils/       # API call helpers
+│       └── App.js       # Root component with routing
+│
+├── .gitignore
+└── README.md
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Getting Started
 
-### Code Splitting
+### Prerequisites
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Make sure you have the following installed:
 
-### Analyzing the Bundle Size
+- [Node.js](https://nodejs.org/) v16+
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [MongoDB](https://www.mongodb.com/) (local instance or MongoDB Atlas URI)
+- A [Cloudinary](https://cloudinary.com/) account for image uploads
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 1. Clone the Repository
 
-### Making a Progressive Web App
+```bash
+git clone https://github.com/MisterStranger03/Clean_Street-Group-2.git
+cd Clean_Street-Group-2
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 2. Set Up the Backend
 
-### Advanced Configuration
+```bash
+cd backend
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Create a `.env` file inside the `backend/` directory (see [Environment Variables](#environment-variables)).
 
-### Deployment
+```bash
+npm start
+# Server runs on http://localhost:5000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 3. Set Up the Frontend
 
-### `npm run build` fails to minify
+```bash
+cd ../frontend
+npm install
+npm start
+# App runs on http://localhost:3000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## Environment Variables
+
+Create a `.env` file inside the `backend/` directory with the following keys:
+
+```env
+# Server
+PORT=5000
+
+# MongoDB
+MONGO_URI=your_mongodb_connection_string
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+> ⚠️ Never commit your `.env` file. It is already listed in `.gitignore`.
+
+---
+
+## API Reference
+
+### Auth
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/login` | Login and receive a JWT |
+
+### Complaints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/complaints` | Fetch all complaints |
+| `GET` | `/api/complaints/:id` | Fetch a single complaint |
+| `POST` | `/api/complaints` | Submit a new complaint (auth required) |
+| `PUT` | `/api/complaints/:id` | Update complaint status (auth required) |
+| `DELETE` | `/api/complaints/:id` | Delete a complaint (auth required) |
+
+> All protected routes require an `Authorization: Bearer <token>` header.
+
+---
+
+## Contributors
+
+| Name | GitHub |
+|---|---|
+| Raman Sah | [@MisterStranger03](https://github.com/MisterStranger03) |
+| Devi Saranya | [@DeviSaranya11](https://github.com/DeviSaranya11) |
+| Subhayan Dutta | [@subhayandutta100-wq](https://github.com/subhayandutta100-wq) |
+
+---
+
+## License
+
+This project was developed as a group internship project. Feel free to fork and build upon it.
